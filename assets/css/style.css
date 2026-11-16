@@ -47,21 +47,35 @@
   --c-accent: #f2a33a; --c-teal: #4fc1b0; --c-str: #9fd38a; --c-err: #ff7a7a;
 }
 
+/* =========================================================
+   Fonts: RStudio's own stacks + R help-page conventions
+   - Fixed width: the stack RStudio's web IDE uses (Monaco on macOS,
+     Consolas / Lucida Console on Windows, Ubuntu Mono elsewhere).
+   - UI: RStudio's proportional UI stack.
+   - Body: R's HTML help pages use the browser serif for text and
+     monospace for headings (doc/html/R.css).
+   ========================================================= */
+:root {
+  --mono: Monaco, Consolas, "Lucida Console", "Ubuntu Mono", "Droid Sans Mono", "DejaVu Sans Mono", monospace;
+  --ui: "Lucida Sans", "DejaVu Sans", "Noto Sans", "Lucida Grande", "Segoe UI", Verdana, Helvetica, sans-serif;
+  --serif: "Times New Roman", Times, "Liberation Serif", serif;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Source Serif 4", Georgia, serif;
-  font-size: 17px;
-  line-height: 1.65;
+  font-family: var(--serif);
+  font-size: 18.5px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 a { color: var(--accent-2); text-underline-offset: 3px; }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
-code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; }
+code, .mono { font-family: var(--mono); }
 .skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: #000; padding: 6px 10px; z-index: 50; }
 .skip:focus { left: 8px; top: 8px; }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
@@ -73,7 +87,7 @@ code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, mono
   position: sticky; top: 0; z-index: 20;
   background: var(--pane-head);
   border-bottom: 1px solid var(--border);
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--mono);
 }
 .topbar-inner {
   max-width: 1120px; margin: 0 auto; padding: 0 20px;
@@ -95,7 +109,7 @@ code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, mono
   display: inline-flex; align-items: center; gap: 6px;
   background: transparent; border: 1px solid var(--border); border-radius: 6px;
   padding: 5px 10px; font-size: 12.5px; cursor: pointer; color: var(--text-2);
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--mono);
 }
 .tool:hover { border-color: var(--accent); color: var(--text); }
 .tool-console { border-color: var(--accent); color: var(--accent-ink); }
@@ -117,7 +131,7 @@ main { padding: 22px 0 40px; }
   display: flex; align-items: center; gap: 4px;
   background: var(--pane-head); border-bottom: 1px solid var(--border);
   padding: 0 12px; min-height: 36px;
-  font-family: "JetBrains Mono", monospace; font-size: 12px;
+  font-family: var(--mono); font-size: 12px;
 }
 .pane-tab { padding: 8px 6px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; border-top: 0; border-left: 0; border-right: 0; cursor: default; }
 .pane-tab.active { color: var(--text); border-bottom-color: var(--accent); }
@@ -126,13 +140,13 @@ button.pane-tab:hover { color: var(--text); }
 .pane-meta { margin-left: auto; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 12px; }
 .pane-body { padding: 28px 32px 30px; }
 
-.kicker { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--accent-ink); margin: 0 0 4px; }
+.kicker { font-family: var(--mono); font-size: 12.5px; color: var(--accent-ink); margin: 0 0 4px; }
 .kicker::before { content: "> "; color: var(--muted); }
 h1, h2, h3 { line-height: 1.2; letter-spacing: -.005em; }
 h2 { font-size: 28px; margin: 0 0 16px; font-weight: 600; }
 h3 { font-size: 19px; margin: 0 0 6px; font-weight: 600; }
 p { margin: 0 0 14px; }
-.meta { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--muted); }
+.meta { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .note { color: var(--text-2); }
 
 /* =========================================================
@@ -148,7 +162,7 @@ p { margin: 0 0 14px; }
 .buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: "JetBrains Mono", monospace; font-size: 13px; text-decoration: none;
+  font-family: var(--mono); font-size: 13px; text-decoration: none;
   padding: 7px 13px; border-radius: 6px; border: 1px solid var(--border); color: var(--text);
   background: var(--pane-alt);
 }
@@ -156,14 +170,14 @@ p { margin: 0 0 14px; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: #1b1300; font-weight: 500; }
 .btn.primary:hover { filter: brightness(1.06); background: var(--accent); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; padding: 0; list-style: none; }
-.tags li { font-family: "JetBrains Mono", monospace; font-size: 12px; border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; color: var(--text-2); }
+.tags li { font-family: var(--mono); font-size: 12px; border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; color: var(--text-2); }
 .str-tag::before, .str-tag::after { content: '"'; color: var(--muted); }
 
 .side { display: grid; gap: 16px; }
 
 /* Environment pane */
-.env { width: 100%; border-collapse: collapse; font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
-.env-group { padding: 6px 14px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); background: var(--pane-alt); border-bottom: 1px solid var(--border); }
+.env { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; }
+.env-group { padding: 6px 14px; font-family: var(--mono); font-size: 11px; color: var(--muted); background: var(--pane-alt); border-bottom: 1px solid var(--border); }
 .env tr { border-bottom: 1px solid var(--border); }
 .env tr:last-child { border-bottom: 0; }
 .env a { display: block; color: inherit; text-decoration: none; }
@@ -187,7 +201,7 @@ p { margin: 0 0 14px; }
 .mini-console .pane-tab.active { color: var(--c-text); }
 .mini-console .pane-meta { color: var(--c-muted); }
 .mini-body {
-  padding: 12px 14px 6px; font-family: "JetBrains Mono", monospace; font-size: 12.5px; line-height: 1.6;
+  padding: 12px 14px 6px; font-family: var(--mono); font-size: 12.5px; line-height: 1.6;
   color: var(--c-text-2); white-space: pre-wrap;
 }
 .mini-body .c { color: var(--c-text); }
@@ -198,7 +212,7 @@ p { margin: 0 0 14px; }
   display: flex; align-items: center; gap: 8px; width: 100%;
   background: none; border: 0; border-top: 1px solid var(--c-border);
   padding: 9px 14px; text-align: left; cursor: text;
-  font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--c-muted);
+  font-family: var(--mono); font-size: 12.5px; color: var(--c-muted);
 }
 .mini-open .p { color: var(--c-accent); }
 .mini-open:hover { color: var(--c-text-2); }
@@ -213,45 +227,45 @@ p { margin: 0 0 14px; }
 .card p:last-child { margin-bottom: 0; }
 .card .top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
 .status {
-  display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 11.5px;
+  display: inline-block; font-family: var(--mono); font-size: 11.5px;
   padding: 1px 8px; border-radius: 4px; border: 1px solid var(--accent); color: var(--accent-ink);
 }
 .status.alt { border-color: var(--accent-2); color: var(--accent-2); }
-.links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-family: "JetBrains Mono", monospace; font-size: 13px; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-family: var(--mono); font-size: 13px; }
 .links a::before { content: "["; color: var(--muted); }
 .links a::after { content: "]"; color: var(--muted); }
 .links a { text-decoration: none; }
 .links a:hover { text-decoration: underline; }
-.sub-h { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--muted); font-weight: 400; margin: 26px 0 10px; }
+.sub-h { font-family: var(--mono); font-size: 12.5px; color: var(--muted); font-weight: 400; margin: 26px 0 10px; }
 .sub-h::before { content: "## "; }
 
 /* R-vector style publication list */
 .pubs { list-style: none; padding: 0; margin: 0; }
 .pubs li { display: grid; grid-template-columns: 42px 1fr; gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .pubs li:last-child { border-bottom: 0; }
-.pubs .idx { font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--muted); padding-top: 3px; }
+.pubs .idx { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 3px; }
 .pubs .links { margin-top: 6px; }
 
 /* data.frame style tables */
 .df { width: 100%; border-collapse: collapse; font-size: 16px; }
-.df th { text-align: left; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 500; color: var(--muted); border-bottom: 1px solid var(--border); padding: 6px 12px 6px 0; }
+.df th { text-align: left; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--muted); border-bottom: 1px solid var(--border); padding: 6px 12px 6px 0; }
 .df td { border-bottom: 1px solid var(--border); padding: 11px 12px 11px 0; vertical-align: top; }
 .df tr:last-child td { border-bottom: 0; }
-.df td.row { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--muted); width: 32px; }
-.df td.mono { font-family: "JetBrains Mono", monospace; font-size: 13.5px; white-space: nowrap; }
+.df td.row { font-family: var(--mono); font-size: 12.5px; color: var(--muted); width: 32px; }
+.df td.mono { font-family: var(--mono); font-size: 13.5px; white-space: nowrap; }
 .df .meta { display: block; }
 .df-wrap { overflow-x: auto; }
 
 /* Methods: two columns, table + packages */
 .methods-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; }
-.pkgs { list-style: none; padding: 0; margin: 0; font-family: "JetBrains Mono", monospace; font-size: 13px; }
+.pkgs { list-style: none; padding: 0; margin: 0; font-family: var(--mono); font-size: 13px; }
 .pkgs li { display: grid; grid-template-columns: 22px 110px 1fr; gap: 6px; padding: 7px 0; border-bottom: 1px solid var(--border); }
 .pkgs li:last-child { border-bottom: 0; }
 .pkgs .box { color: var(--accent-2); }
 .pkgs .pnote { color: var(--muted); }
 
 /* list-print style for contact */
-.rlist { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 14px; }
+.rlist { margin: 0; font-family: var(--mono); font-size: 14px; }
 .rlist div { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
 .rlist div:last-child { border-bottom: 0; }
 .rlist dt { color: var(--accent-ink); }
@@ -262,7 +276,7 @@ p { margin: 0 0 14px; }
 /* =========================================================
    Status bar footer
    ========================================================= */
-.statusbar { background: var(--pane-head); border-top: 1px solid var(--border); font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--muted); }
+.statusbar { background: var(--pane-head); border-top: 1px solid var(--border); font-family: var(--mono); font-size: 12px; color: var(--muted); }
 .statusbar-inner { max-width: 1120px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 0 3px rgba(79,193,176,.18); }
 .statusbar .sep { opacity: .5; }
@@ -278,7 +292,7 @@ p { margin: 0 0 14px; }
   background: var(--c-bg); color: var(--c-text-2);
   border-top: 1px solid var(--c-border);
   box-shadow: 0 -8px 30px rgba(0,0,0,.35);
-  font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.55;
+  font-family: var(--mono); font-size: 13px; line-height: 1.55;
 }
 .console[hidden] { display: none; }
 .console-head { display: flex; align-items: center; gap: 12px; padding: 0 12px 0 16px; min-height: 36px; background: var(--c-head); border-bottom: 1px solid var(--c-border); font-size: 12px; }
@@ -363,3 +377,41 @@ body.console-open { padding-bottom: min(44vh, 420px); }
   .d-only { display: none; }
   .m-only { display: block !important; }
 }
+
+/* ---- R-style typography: monospace headings, like R's help pages ---- */
+h1, h2, h3 { font-family: var(--mono); letter-spacing: 0; }
+.id h1 { font-size: 38px; letter-spacing: -.01em; }
+h2 { font-size: 25px; }
+h3 { font-size: 17px; }
+.id .role { font-family: var(--serif); }
+/* RStudio chrome (tabs, nav, buttons) uses the UI sans stack */
+.tabs a, .pane-tab, .console-tab, .tool, .btn, .env-group, .statusbar, .pane-meta { font-family: var(--ui); font-size-adjust: none; }
+.tabs a { font-size: 13.5px; }
+.pane-tab, .pane-meta { font-size: 12.5px; }
+.env td.name a, .env td.type a { font-family: var(--mono); }
+
+/* ---- new section layouts ---- */
+.cards-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cards-2 .card { margin: 0; }
+.xp { list-style: none; padding: 0; margin: 0; }
+.xp > li { display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.xp > li:first-child { padding-top: 0; }
+.xp > li:last-child { border-bottom: 0; padding-bottom: 0; }
+.xp .idx { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 2px; }
+.xp-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; align-items: baseline; }
+.xp-top h3 { margin: 0; }
+.xp-org { margin: 2px 0 6px; color: var(--text-2); font-style: italic; }
+.xp ul { margin: 0; padding-left: 1.1em; }
+.xp ul li { margin-bottom: 3px; }
+.pubs .meta { display: block; margin-top: 2px; }
+.pkgs .pname { color: var(--text); }
+.two > .pane { min-width: 0; }
+@media (max-width: 720px) {
+  .cards-2 { grid-template-columns: 1fr; }
+  .xp > li { grid-template-columns: 26px 1fr; }
+  .id h1 { font-size: 31px; }
+}
+
+/* slightly larger small mono text for legibility */
+.meta, .kicker, .mini-body, .env, .pkgs, .tags li, .links { font-size: 13.5px; }
+.sub-h { font-size: 13.5px; }

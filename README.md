@@ -14,9 +14,9 @@ No build step. It is plain HTML, CSS, and JavaScript.
 ## Editing your content
 
 Everything you write lives in one file: `assets/js/content.js`.
-Replace anything in `[square brackets]`. Then replace `files/cv.pdf` with your CV.
+Your CV lives at `files/cv.pdf`; replace it when you update your CV.
 
-Optional: add a headshot at `assets/img/headshot.jpg` and set `photo` in `content.js`.
+Your headshot is `assets/img/headshot.jpg`.
 
 ## Previewing locally
 
@@ -45,3 +45,10 @@ Then open http://localhost:8000.
 | `clear()` or Ctrl+L | clear the console |
 
 Direct links work too: `#research`, `#teaching`, and so on.
+
+## Fonts
+
+The site uses the same font stacks as RStudio's web IDE (Monaco on macOS,
+Consolas or Lucida Console on Windows, Ubuntu Mono elsewhere) for code-like
+text, and RStudio's UI font stack for tabs and buttons. Body text follows R's
+HTML help pages: a serif body with monospace headings.

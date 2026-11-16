@@ -2,150 +2,229 @@
   content.js
   ----------
   This is the only file you need to edit to update the site.
-  Everything below shows up in three places at once:
-    1. the Environment pane (the clickable objects on the right),
-    2. the Viewer pane (the readable pages), and
-    3. the plain view (a classic academic page for print or quick reading).
-
   Text fields can contain simple HTML, like <em>italics</em> or <a href="...">links</a>.
-  Replace anything written in [square brackets].
+  Everything here comes from the CV in files/cv.pdf.
 */
 
 window.SITE = {
   // ---- Identity -----------------------------------------------------------
-  name: "[Your Name]",
-  shortName: "[yourname]",            // used in the window title and prompt path
-  role: "PhD Candidate, Political Science",
-  institution: "[University Name]",
-  location: "[City, State]",
-  email: "[you@university.edu]",
-  pronouns: "",                       // optional, e.g. "she/her"
-  photo: "",                          // optional, e.g. "assets/img/headshot.jpg"
+  name: "Anitesh Sandhu",
+  shortName: "asandhu",
+  role: "Ph.D. Student, Political Science & International Affairs",
+  institution: "University of Georgia",
+  location: "Athens, GA",
+  email: "sandhuanitesh@gmail.com",
+  photo: "assets/img/headshot.jpg",
 
-  // One sentence that tells a reader what you study and how.
   tagline:
-    "I study the politics of energy: who wins and who loses when energy systems change, " +
-    "and how institutions shape those fights. My work leans on causal inference and careful measurement.",
+    "I study energy markets and the politics that govern them: how natural gas prices react to shocks, " +
+    "how state utility commissions make decisions, and how states use rhetoric. " +
+    "My work is quantitative, built on volatility models, panel regressions, and text as data.",
 
-  // A few short paragraphs. Plain language works best.
   bio: [
-    "I am a PhD candidate in Political Science at [University Name]. My research sits where " +
-      "comparative politics, American politics, and political economy meet the energy sector.",
-    "[Second paragraph: the big question your dissertation asks, and why it matters outside academia.]",
-    "[Third paragraph: the kinds of data and designs you use, for example administrative records, " +
-      "text, spatial data, field or survey experiments.]"
+    "I am a Ph.D. student in Political Science and International Affairs at the University of Georgia, " +
+      "on the methodology track with an emphasis on energy. I also hold a Master of International Policy (Honors) " +
+      "and a B.S. in Political Science and International Affairs (<em>cum laude</em>), both from UGA.",
+    "I am an Energy Analyst at UGA's Benson-Bertsch Center for International Trade and Security, where I build " +
+      "price forecasting models, R tools for collecting U.S. Energy Information Administration (EIA) data, " +
+      "and short public briefs on energy resources.",
+    "Before graduate school I worked in the energy industry, advising on LNG and oil market risk and supporting " +
+      "a project to refurbish land drilling rigs. I bring that experience to questions about markets and the " +
+      "institutions that govern them."
   ],
 
   interests: [
-    "Energy politics",
-    "Climate and environmental policy",
-    "Political economy of regulation",
-    "Public opinion on energy transitions",
-    "Causal inference",
-    "Computational social science"
+    "Energy economics and policy",
+    "Natural gas markets and price volatility",
+    "Public utility commission decision-making",
+    "Strategic rhetoric and political violence",
+    "Text as data",
+    "Quantitative methods"
   ],
 
   links: [
-    { label: "Email", url: "mailto:[you@university.edu]" },
-    { label: "CV (PDF)", url: "files/cv.pdf" },
-    { label: "Google Scholar", url: "[https://scholar.google.com/...]" },
-    { label: "GitHub", url: "https://github.com/ani-sdhu" },
-    { label: "LinkedIn", url: "[https://www.linkedin.com/in/...]" }
+    { label: "Email", url: "mailto:sandhuanitesh@gmail.com" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/anisandhu/" },
+    { label: "GitHub", url: "https://github.com/ani-sdhu" }
   ],
+  cvUrl: "files/cv.pdf",
 
   // ---- Research -----------------------------------------------------------
-  dissertation: {
-    title: "[Dissertation title]",
-    committee: "[Chair Name] (chair), [Member Name], [Member Name]",
-    summary:
-      "[Two to four sentences. What is the puzzle, what is your argument, and what evidence do you use?]"
-  },
-
-  // status examples: "Working paper", "Under review", "In progress", "R&R at [Journal]"
   research: [
     {
-      title: "[Working paper title]",
-      status: "Working paper",
-      coauthors: "",
-      method: "Difference-in-differences",
-      abstract: "[One or two sentences on the question, the data, and the main finding.]",
-      links: [{ label: "Draft", url: "#" }]
-    },
-    {
-      title: "[Second project title]",
-      status: "Under review",
-      coauthors: "with [Coauthor Name]",
-      method: "Regression discontinuity",
-      abstract: "[One or two sentences on the question, the data, and the main finding.]",
-      links: []
-    },
-    {
-      title: "[Third project title]",
+      title: "Partisanship and decision-making on state public service commissions",
       status: "In progress",
-      coauthors: "",
-      method: "Text as data",
-      abstract: "[One or two sentences on the question, the data, and the main finding.]",
+      method: "Vote-level regression, vote fixed effects",
+      abstract:
+        "A multi-state design comparing three kinds of commissions: elected partisan commissions, appointed " +
+        "commissions with party-balance rules, and appointed commissions without them. Vote-level regressions " +
+        "with vote fixed effects estimate the partisan gap."
+    },
+    {
+      title: "Weather shocks and natural gas price volatility: a five-state panel",
+      status: "In progress",
+      method: "EGARCH, EGARCH-X, HAR-RV",
+      abstract:
+        "EGARCH and EGARCH-X models for Delaware, Florida, Georgia, Maryland, and Ohio, with heating and cooling " +
+        "degree day surprises as outside (exogenous) regressors, plus a companion HAR-RV model using daily " +
+        "Henry Hub spot prices."
+    },
+    {
+      title: "The strategic deployment of rhetoric by states",
+      status: "In progress",
+      method: "Natural language processing",
+      abstract:
+        "Uses natural language processing to measure how states use rhetoric strategically, and whether that " +
+        "rhetoric helps predict political violence."
+    }
+  ],
+
+  capstone: {
+    title: "The Impact of Communication on U.S.-Saudi Gas Market Shock and Interaction",
+    note: "Master of International Policy capstone, University of Georgia, 2026"
+  },
+
+  presentations: [
+    { kind: "Policy report", title: "V for Voting: An Analysis of Democratic Backsliding in South America",
+      venue: "U.S. Department of State, Foreign Service Institute", year: "2024" },
+    { kind: "Policy report", title: "DPRK: Forced Labor and Supply Chain Analysis",
+      venue: "U.S. Department of State, Bureau of East Asian and Pacific Affairs", year: "2024" },
+    { kind: "Conference", title: "Strategic Deployment of Rhetoric by States",
+      venue: "Southeast Undergraduate Research Conference, Athens, GA", year: "2023" }
+  ],
+
+  // ---- Software and data products ----------------------------------------
+  software: [
+    {
+      name: "Energy and Economic Data Explorer",
+      kind: "Dash / Plotly app",
+      desc: "A public web app on Hugging Face Spaces that combines EIA and FRED data for the Benson-Bertsch " +
+        "Center's energy research program.",
+      links: []   // add { label: "Open app", url: "https://huggingface.co/spaces/..." }
+    },
+    {
+      name: "GridTranslate",
+      kind: "Crosswalk dataset",
+      desc: "A crosswalk of more than 10,000 entries linking every U.S. balancing authority to its NERC " +
+        "Regional Entity and to the counties it serves.",
+      links: []
+    },
+    {
+      name: "EIA data tools",
+      kind: "R",
+      desc: "R tools for collecting EIA data, a pipeline that maps the electricity sources serving U.S. military " +
+        "installations, and a scraper for state energy legislation.",
+      links: []
+    },
+    {
+      name: "Residential electrification tracker",
+      kind: "Data framework",
+      desc: "A framework for tracking residential electrification, built on the EIA State Energy Data System (SEDS).",
       links: []
     }
   ],
 
-  // Write each entry already formatted in APA style.
-  publications: [
+  // ---- Experience ---------------------------------------------------------
+  experience: [
     {
-      apa:
-        "[Lastname, F. M.], &amp; [Coauthor, F. M.] ([Year]). [Article title in sentence case]. " +
-        "<em>[Journal Name]</em>, <em>[Volume]</em>([Issue]), [pages]. https://doi.org/[doi]",
-      links: [{ label: "PDF", url: "#" }, { label: "Replication", url: "#" }]
+      title: "Energy Analyst",
+      org: "Benson-Bertsch Center for International Trade and Security, University of Georgia",
+      place: "Athens, GA",
+      dates: "Aug. 2025 to present",
+      bullets: [
+        "Designed the research architecture for a team of 10+ turning large datasets into policy- and consumer-oriented briefs",
+        "Built price forecasting models, plant implementation plans, and other industry-specific analyses",
+        "Author standardized two-page briefs on energy resources (capacity factor, efficiency) for general audiences, built on 2024 EIA data"
+      ]
+    },
+    {
+      title: "CIO and Strategy Consultant",
+      org: "Scanoleum",
+      place: "Milpitas, CA",
+      dates: "Jan. 2020 to present",
+      bullets: [
+        "Advise on LNG and oil market risk, export controls, and commercial contracts valued up to $3M",
+        "Support commercial strategy through market analysis, risk management, and reporting, contributing to over $400K in sales",
+        "Coordinated generator shipments to support civilian needs during wartime conflict"
+      ]
+    },
+    {
+      title: "Training Project Engineer",
+      org: "Phronteseas",
+      place: "Remote",
+      dates: "Feb. 2023 to Dec. 2023",
+      bullets: [
+        "Supported a $140M project refurbishing 11 land drilling rigs (750 to 2000 HP) for Kuwait Drilling Company over 11 months",
+        "Led specification gathering, data visualization, and contract review with vendors and global manufacturers"
+      ]
+    },
+    {
+      title: "Creation and Technology Lab Manager",
+      org: "Georgia State University",
+      place: "Atlanta, GA",
+      dates: "Oct. 2022 to May 2023",
+      bullets: [
+        "Managed technical equipment for campus events and trained students in safe lab use across multiple Atlanta-area campuses"
+      ]
     }
-  ],
-
-  // ---- Methods ------------------------------------------------------------
-  // Shown in the "methods" object and in the Packages tab.
-  methods: [
-    { area: "Causal inference", detail: "Difference-in-differences, regression discontinuity, synthetic control, instrumental variables" },
-    { area: "Measurement", detail: "Survey design, item response theory, index construction" },
-    { area: "Text as data", detail: "Topic models, supervised classification, embeddings" },
-    { area: "Spatial analysis", detail: "Geocoding, spatial joins, distance and exposure measures" },
-    { area: "Bayesian modeling", detail: "Multilevel models, MRP" },
-    { area: "Reproducibility", detail: "Version control, literate programming, replication archives" }
-  ],
-
-  // R packages (or other tools) you actually use. These fill the Packages tab.
-  packages: [
-    { name: "tidyverse", note: "data wrangling and visualization" },
-    { name: "fixest", note: "fixed effects and event study models" },
-    { name: "did", note: "staggered difference-in-differences" },
-    { name: "rdrobust", note: "regression discontinuity" },
-    { name: "Synth", note: "synthetic control" },
-    { name: "sf", note: "spatial data" },
-    { name: "quanteda", note: "text analysis" },
-    { name: "brms", note: "Bayesian multilevel models" },
-    { name: "modelsummary", note: "tables for papers" },
-    { name: "targets", note: "reproducible pipelines" }
   ],
 
   // ---- Teaching -----------------------------------------------------------
   teaching: [
-    { role: "Instructor of record", course: "[Course number]: [Course title]", term: "[Term Year]", place: "[University Name]" },
-    { role: "Teaching assistant", course: "[Course number]: Introduction to Quantitative Methods", term: "[Term Year]", place: "[University Name]" },
-    { role: "Teaching assistant", course: "[Course number]: Environmental Politics", term: "[Term Year]", place: "[University Name]" }
+    {
+      role: "Teaching Assistant",
+      course: "POLS 1101: American Government",
+      term: "Fall 2026",
+      place: "University of Georgia",
+      note: "Instructor: Dr. Michael Lynch. I lead breakout sessions that connect lecture concepts to real-world examples."
+    }
+  ],
+
+  // ---- Methods and tools --------------------------------------------------
+  methods: [
+    { area: "Volatility modeling", detail: "EGARCH, EGARCH-X, HAR-RV" },
+    { area: "Panel regression", detail: "Fixed effects designs across states and votes" },
+    { area: "Text as data", detail: "Natural language processing" },
+    { area: "Data pipelines", detail: "API collection, scrapers, crosswalks" },
+    { area: "Visualization", detail: "Interactive Dash/Plotly apps, Power BI" }
+  ],
+
+  // Shown as library(): the languages and software you work in.
+  tools: [
+    { name: "R", note: "EIA data tools and pipelines" },
+    { name: "Python", note: "Dash/Plotly apps" },
+    { name: "Quarto", note: "" },
+    { name: "LaTeX", note: "" },
+    { name: "JavaScript", note: "" },
+    { name: "HTML", note: "" },
+    { name: "Power BI", note: "" },
+    { name: "Adobe Creative Suite", note: "" }
+  ],
+
+  // Shown as data(): the data sources you work with.
+  data: [
+    { name: "EIA", note: "API v2, State Energy Data System (SEDS)" },
+    { name: "FRED", note: "Federal Reserve Economic Data" },
+    { name: "BEA", note: "Bureau of Economic Analysis" },
+    { name: "Census", note: "U.S. Census Bureau" },
+    { name: "NOAA/NCEI", note: "weather and climate records" }
   ],
 
   // ---- CV highlights ------------------------------------------------------
-  cvUrl: "files/cv.pdf",
   education: [
-    { degree: "PhD, Political Science (expected [Year])", school: "[University Name]" },
-    { degree: "MA, Political Science", school: "[University Name], [Year]" },
-    { degree: "BA, [Major]", school: "[University Name], [Year]" }
+    { degree: "Ph.D., Political Science & International Affairs", school: "University of Georgia", year: "2026 to 2031 (expected)", note: "Methodology track, energy emphasis" },
+    { degree: "Master of International Policy, Honors", school: "University of Georgia", year: "May 2026", note: "" },
+    { degree: "B.S., Political Science and International Affairs, cum laude", school: "University of Georgia", year: "May 2025", note: "" }
   ],
-  awards: [
-    "[Fellowship or grant name], [Year]",
-    "[Award name], [Year]"
+  certifications: [
+    "Certificate in Data Analysis and Policy, University of Georgia, 2027 (expected)"
   ],
+  languages: "English (native), Spanish (professional), Hindi (conversational), Punjabi (conversational)",
 
-  // ---- News (optional; leave the array empty to hide) ---------------------
+  // ---- News (shown in the History tab) ------------------------------------
   news: [
-    { date: "[Month Year]", text: "[Presented a paper at a conference, for example APSA or MPSA.]" },
-    { date: "[Month Year]", text: "[New working paper posted.]" }
+    { date: "Fall 2026", text: "Teaching assistant for POLS 1101: American Government at UGA." },
+    { date: "May 2026", text: "Completed the Master of International Policy (Honors) at UGA." },
+    { date: "Aug. 2025", text: "Joined the Benson-Bertsch Center for International Trade and Security as an Energy Analyst." }
   ]
 };
