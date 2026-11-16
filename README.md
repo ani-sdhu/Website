@@ -1,10 +1,13 @@
 # Academic website (R console theme)
 
-A one-page academic site styled like an RStudio session. Visitors navigate by
-clicking objects in the **Environment** pane, using the buttons under the
-console, or typing commands such as `research()` or `help()`. Pages open in the
-**Viewer** pane. A **plain view** (`plain()` or the button in the top bar) shows
-everything as a classic, printable page.
+A one-page academic site styled after an RStudio session. It reads like a
+normal academic website: a top menu, your photo, name, bio, and links up front,
+and clear sections below. The R feel lives in the styling. Each section is an
+RStudio-style pane, the hero has a clickable Environment pane, tables print like
+data frames, and publications are numbered like an R vector.
+
+An optional R console (the "Console" button, or Ctrl+2) lets curious visitors
+type commands such as `research()` or `library(fixest)`. Nobody needs it to get around.
 
 No build step. It is plain HTML, CSS, and JavaScript.
 
@@ -34,12 +37,11 @@ Then open http://localhost:8000.
 | Command | What it does |
 | --- | --- |
 | `about()`, `research()`, `publications()`, `methods()`, `teaching()`, `cv()`, `contact()` | open a section |
-| `View(x)`, `print(x)`, `str(x)`, `summary(x)` | inspect any object |
+| `View(x)`, `print(x)`, `summary(x)` | jump to any section |
 | `ls()` | list the objects |
 | `library(pkg)` | check whether a tool is in your toolkit |
-| `plain()` | switch to the plain view |
 | `theme()` | switch light and dark |
 | `citation()` | APA citation for the site |
 | `clear()` or Ctrl+L | clear the console |
 
-Direct links work too: `#/research`, `#/teaching`, `#/plain`, and so on.
+Direct links work too: `#research`, `#teaching`, and so on.
