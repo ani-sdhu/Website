@@ -105,7 +105,7 @@
 
   function draw(animate) {
     var W = Math.max(280, holder.clientWidth), small = W < 620, tiny = W < 420, H = small ? 320 : 370;
-    var m = { l: 56, r: 12, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
+    var m = { l: 56, r: 2, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
     var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
     var Y = function (v) { return base - v / TOP * ph; };
     var f1 = function (n) { return Math.round(n * 10) / 10; };
@@ -239,7 +239,7 @@
   function focus(band) {
     holder.classList.toggle("focus", !!band);
     $$("#plot .band").forEach(function (p) { p.classList.toggle("on", !!band && p.classList.contains(band)); });
-    $$(".legend a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-band") === band); });
+    $$(".navbar a[data-band]").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-band") === band); });
   }
 
   // crosshair, edge dots, and the tooltip for week t
@@ -304,13 +304,6 @@
   });
   holder.addEventListener("pointermove", track);
   holder.addEventListener("pointerleave", function () { focus(null); hide(); });
-  $$(".legend a").forEach(function (a) {
-    var b = a.getAttribute("data-band");
-    a.addEventListener("pointerenter", function () { focus(b); });
-    a.addEventListener("pointerleave", function () { focus(null); });
-    a.addEventListener("focus", function () { focus(b); });
-    a.addEventListener("blur", function () { focus(null); });
-  });
   var redraw = null, lastW = holder.clientWidth;
   window.addEventListener("resize", function () {
     clearTimeout(redraw);
@@ -332,7 +325,7 @@
       } else a.removeAttribute("aria-current");
     });
   }
-  links.concat($$(".legend a")).forEach(function (a) {
+  links.forEach(function (a) {
     a.addEventListener("click", function () {
       held = a.getAttribute("href").slice(1);
       mark(held);
@@ -358,6 +351,18 @@
   }, { passive: true });
   window.addEventListener("resize", spy);
   spy();
+  // hovering a colour-coded menu item lights up its band in the chart
+  links.forEach(function (a) {
+    var band = a.getAttribute("data-band");
+    if (!band) return;
+    a.addEventListener("pointerenter", function () { focus(band); });
+    a.addEventListener("pointerleave", function () { focus(null); });
+    a.addEventListener("focus", function () { focus(band); });
+    a.addEventListener("blur", function () { focus(null); });
+  });
+  // the date the page was last published
+  var upd = $("#updated"), lm = new Date(document.lastModified);
+  if (upd && !isNaN(lm)) upd.textContent = " \u00b7 Updated " + MONTHS[lm.getMonth()] + " " + lm.getFullYear();
 
   /* ---------- R console ---------- */
   var box = $("#console"), out = $("#console-out"), input = $("#console-input"), scroller = $("#console-scroll");

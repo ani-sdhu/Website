@@ -8,6 +8,12 @@
   <script>
     try { if (localStorage.getItem("theme") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}
   </script>
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Anitesh Sandhu">
+  <meta property="og:description" content="Ph.D. student in Political Science and International Affairs at the University of Georgia. Natural gas price volatility, state public service commissions, and quantitative methods.">
+  <meta property="og:image" content="assets/img/headshot.jpg">
+  <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -18,9 +24,12 @@
   <a class="skip" href="#main">Skip to content</a>
 
   <header class="top wrap">
-    <div>
-      <h1>Anitesh Sandhu</h1>
-      <p class="role">Ph.D. student, Political Science and International Affairs, University of Georgia</p>
+    <div class="id">
+      <img class="portrait" src="assets/img/headshot.jpg" alt="Portrait of Anitesh Sandhu" width="120" height="120">
+      <div>
+        <h1>Anitesh Sandhu</h1>
+        <p class="role">Ph.D. student, Political Science and International Affairs, University of Georgia</p>
+      </div>
     </div>
     <ul class="contact-top">
       <li><a href="mailto:sandhuanitesh@gmail.com">sandhuanitesh@gmail.com</a></li>
@@ -34,12 +43,12 @@
     <div class="wrap navbar-inner">
       <ul>
         <li><a href="#description">description</a></li>
-        <li><a href="#research">research</a></li>
-        <li><a href="#software">software</a></li>
-        <li><a href="#methods">methods</a></li>
-        <li><a href="#teaching">teaching</a></li>
-        <li><a href="#education">education</a></li>
-        <li><a href="#experience">experience</a></li>
+        <li><a href="#research" data-band="research">research</a></li>
+        <li><a href="#software" data-band="software">software</a></li>
+        <li><a href="#methods" data-band="methods">methods</a></li>
+        <li><a href="#teaching" data-band="teaching">teaching</a></li>
+        <li><a href="#education" data-band="coursework">education</a></li>
+        <li><a href="#experience" data-band="industry">experience</a></li>
         <li><a href="#contact">contact</a></li>
       </ul>
       <p class="nav-tools">
@@ -57,24 +66,21 @@
         <p>I am a first-year Ph.D. student in Political Science and International Affairs at the University of Georgia, on the methodology track with an energy emphasis. I work as an Energy Analyst at UGA's Benson-Bertsch Center for International Trade and Security. I have also worked in the energy industry, on LNG and oil market risk and on a land drilling rig refurbishment project.</p>
       </div>
       <div class="hero-side">
-        <div class="who">
-          <img class="portrait" src="assets/img/headshot.jpg" alt="Portrait of Anitesh Sandhu" width="168" height="168">
-          <nav class="legend" aria-label="Sections in the chart">
-            <a href="#research" data-band="research"><span class="sw" aria-hidden="true"></span>research</a>
-            <a href="#teaching" data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</a>
-            <a href="#methods" data-band="methods"><span class="sw" aria-hidden="true"></span>methods</a>
-            <a href="#experience" data-band="industry"><span class="sw" aria-hidden="true"></span>industry</a>
-            <a href="#education" data-band="coursework"><span class="sw" aria-hidden="true"></span>coursework</a>
-            <a href="#software" data-band="software"><span class="sw" aria-hidden="true"></span>software</a>
-          </nav>
-        </div>
+        <ul class="key" aria-label="Chart key">
+          <li data-band="research"><span class="sw" aria-hidden="true"></span>research</li>
+          <li data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</li>
+          <li data-band="methods"><span class="sw" aria-hidden="true"></span>methods</li>
+          <li data-band="industry"><span class="sw" aria-hidden="true"></span>industry</li>
+          <li data-band="coursework"><span class="sw" aria-hidden="true"></span>coursework</li>
+          <li data-band="software"><span class="sw" aria-hidden="true"></span>software</li>
+        </ul>
       <figure class="chunk" id="chunk" hidden>
         <div class="plot-wrap">
           <div class="plot" id="plot"></div>
           <div class="tip" id="plot-tip" hidden></div>
         </div>
         <p class="sr-only" id="plot-live" aria-live="polite"></p>
-        <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Terms hold near 40 hours through the B.S. and build through the M.I.P. to a 65-hour capstone. The Ph.D. starts near 60, led by teaching, coursework, and methods, and research takes over after comprehensive exams. Crunch weeks reach about 90. Holiday weeks are adjusted out, the way economists adjust for seasons, and marked as ticks under the axis. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The gray side is a forecast. Click a band to go to that section.</figcaption>
+        <figcaption>Hours per week since my first semester, stacked the way a grid operator stacks demand. The gray side is a forecast; click a band, or a matching color in the menu, to jump to that section.</figcaption>
         <details class="code">
           <summary>see the code!</summary>
           <pre class="src"><code>wk   &lt;- seq(2021.66, 2031.42, by = 1/365)                    <span class="cm"># every day since my first semester</span>
@@ -231,7 +237,7 @@
     </section>
 
     <footer class="foot">
-      <p>&copy; 2026 Anitesh Sandhu</p>
+      <p>&copy; 2026 Anitesh Sandhu<span id="updated"></span></p>
     </footer>
   </main>
 
