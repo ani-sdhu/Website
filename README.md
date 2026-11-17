@@ -51,3 +51,14 @@ Then open http://localhost:8000.
 "R console" in the navigation bar opens a small console. Each section is an
 object: `research()`, `View(methods)`, `ls()`, `help()`, `theme()`, `clear()`,
 `q()`. It is an extra; nothing on the site depends on it.
+
+## Link previews and a custom domain
+
+The page sets Open Graph tags so a pasted link shows a card with
+`assets/img/og.png`. They assume the site is published at
+`https://ani-sdhu.github.io/Website/`. If you move it to a custom domain, update
+the four addresses that start with that URL in the `<head>` of `index.html`.
+
+To use a custom domain: buy the domain, add a `CNAME` record pointing to
+`ani-sdhu.github.io`, then enter the domain under Settings, Pages, Custom domain
+and tick "Enforce HTTPS".

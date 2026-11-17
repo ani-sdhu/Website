@@ -12,8 +12,13 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Anitesh Sandhu">
   <meta property="og:description" content="Ph.D. student in Political Science and International Affairs at the University of Georgia. Natural gas price volatility, state public service commissions, and quantitative methods.">
-  <meta property="og:image" content="assets/img/headshot.jpg">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:url" content="https://ani-sdhu.github.io/Website/">
+  <meta property="og:image" content="https://ani-sdhu.github.io/Website/assets/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Anitesh Sandhu: a stacked chart of weekly hours since the first semester, drawn like an electricity demand curve.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://ani-sdhu.github.io/Website/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -32,7 +37,7 @@
       </div>
     </div>
     <ul class="contact-top">
-      <li><a href="mailto:sandhuanitesh@gmail.com">sandhuanitesh@gmail.com</a></li>
+      <li><a href="mailto:as43537@uga.edu">as43537@uga.edu</a></li>
       <li><a href="files/cv.pdf">CV (PDF)</a></li>
       <li><a href="https://github.com/ani-sdhu">GitHub</a></li>
       <li><a href="https://www.linkedin.com/in/anisandhu/">LinkedIn</a></li>
@@ -44,8 +49,7 @@
       <ul>
         <li><a href="#description">description</a></li>
         <li><a href="#research" data-band="research">research</a></li>
-        <li><a href="#software" data-band="software">software</a></li>
-        <li><a href="#methods" data-band="methods">methods</a></li>
+        <li><a href="#projects" data-band="projects">projects</a></li>
         <li><a href="#teaching" data-band="teaching">teaching</a></li>
         <li><a href="#education" data-band="coursework">education</a></li>
         <li><a href="#experience" data-band="industry">experience</a></li>
@@ -72,7 +76,7 @@
           <li data-band="methods"><span class="sw" aria-hidden="true"></span>methods</li>
           <li data-band="industry"><span class="sw" aria-hidden="true"></span>industry</li>
           <li data-band="coursework"><span class="sw" aria-hidden="true"></span>coursework</li>
-          <li data-band="software"><span class="sw" aria-hidden="true"></span>software</li>
+          <li data-band="projects"><span class="sw" aria-hidden="true"></span>projects</li>
         </ul>
       <figure class="chunk" id="chunk" hidden>
         <div class="plot-wrap">
@@ -99,7 +103,7 @@
   target &lt;- trend + s * ifelse(wk &lt; 2024.6, 14, 12 * (1 - phd) + 4 * phd)   <span class="cm"># summers run heavier</span>
 
   load &lt;- cbind(                                                  <span class="cm"># hours per week, holiday-adjusted</span>
-    software   = 4 * on(2025.6),
+    projects   = 4 * on(2025.6),
     coursework = (1 - s) * (28 * on(2021.6, 2024.6) + 22 * on(2024.6, 2025.4) + 8 * on(2025.4, 2026.6) +
                             14 * on(2026.6, 2028.4)),
     industry   = 2 + 8 * on(2023.1, 2023.95) + s * (46 * on(2021.6, 2024.6) + 20 * on(2024.6, 2026.6)),
@@ -173,15 +177,15 @@
       </article>
     </section>
 
-    <section id="software" aria-labelledby="h-software">
-      <h2 id="h-software">Software and data</h2>
+    <section id="projects" aria-labelledby="h-projects">
+      <h2 id="h-projects">Projects</h2>
       <dl class="args">
         <div>
           <dt>Energy and Economic Data Explorer</dt>
           <dd>A Dash/Plotly application on Hugging Face Spaces that combines EIA and FRED data for the Benson-Bertsch Center's energy research program.</dd>
         </div>
         <div>
-          <dt>GridTranslate</dt>
+          <dt><a href="https://github.com/ani-sdhu/Grid-Translate">GridTranslate</a></dt>
           <dd>A crosswalk table of more than 10,000 entries linking every U.S. balancing authority to its NERC Regional Entity and to the counties it serves.</dd>
         </div>
       </dl>
@@ -229,7 +233,7 @@
     <section id="contact" aria-labelledby="h-contact">
       <h2 id="h-contact">Contact</h2>
       <dl class="args">
-        <div><dt>Email</dt><dd><a href="mailto:sandhuanitesh@gmail.com">sandhuanitesh@gmail.com</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:as43537@uga.edu">as43537@uga.edu</a></dd></div>
         <div><dt>GitHub</dt><dd><a href="https://github.com/ani-sdhu">github.com/ani-sdhu</a></dd></div>
         <div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/anisandhu/">linkedin.com/in/anisandhu</a></dd></div>
         <div><dt>Address</dt><dd>University of Georgia, Athens, GA</dd></div>

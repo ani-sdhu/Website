@@ -98,7 +98,7 @@ h1 {
 .plot .frame, .plot .tick { fill: none; stroke: var(--ink); stroke-width: 1; }
 /* Okabe-Ito, the colour-blind-safe palette built into R (palette.colors) */
 .plot, .legend {
-  --b-coursework: #999999; --b-industry: #cc79a7; --b-methods: #0072b2; --b-teaching: #009e73; --b-software: #56b4e9;
+  --b-coursework: #999999; --b-industry: #cc79a7; --b-methods: #0072b2; --b-teaching: #009e73; --b-projects: #56b4e9;
   --b-research: #e69f00; --b-milestones: #d55e00;
 }
 .plot .band { stroke: var(--edge); stroke-width: .6; stroke-opacity: .55; stroke-linejoin: round; cursor: pointer; transition: opacity .15s; }
@@ -109,7 +109,7 @@ h1 {
 .plot .band.industry { fill: var(--b-industry); }
 .plot .band.methods { fill: var(--b-methods); }
 .plot .band.teaching { fill: var(--b-teaching); }
-.plot .band.software { fill: var(--b-software); }
+.plot .band.projects { fill: var(--b-projects); }
 .plot .band.research { fill: var(--b-research); }
 .plot .band.milestones { fill: var(--b-milestones); }
 .plot .ahead .band { opacity: .6; }
@@ -121,7 +121,7 @@ h1 {
 .plot .diamond { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
 .plot .event.ev-ahead { font-style: italic; fill: var(--text-2); }
 .plot .dot { stroke: var(--bg); stroke-width: 1.5; pointer-events: none; }
-.plot .dot.software { fill: var(--b-software); } .plot .dot.coursework { fill: var(--b-coursework); } .plot .dot.industry { fill: var(--b-industry); } .plot .dot.methods { fill: var(--b-methods); } .plot .dot.teaching { fill: var(--b-teaching); } .plot .dot.research { fill: var(--b-research); }
+.plot .dot.projects { fill: var(--b-projects); } .plot .dot.coursework { fill: var(--b-coursework); } .plot .dot.industry { fill: var(--b-industry); } .plot .dot.methods { fill: var(--b-methods); } .plot .dot.teaching { fill: var(--b-teaching); } .plot .dot.research { fill: var(--b-research); }
 .plot svg:focus { outline: none; }
 .plot svg:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .plot-wrap { position: relative; }
@@ -134,7 +134,7 @@ h1 {
 .tip td + td { text-align: right; padding-left: 14px; }
 .tip tr.on td { font-weight: 600; }
 .tip .sw { display: inline-block; width: 9px; height: 9px; margin-right: 6px; }
-.tip .sw.software { background: var(--b-software); } .tip .sw.coursework { background: var(--b-coursework); } .tip .sw.industry { background: var(--b-industry); } .tip .sw.methods { background: var(--b-methods); } .tip .sw.teaching { background: var(--b-teaching); } .tip .sw.research { background: var(--b-research); }
+.tip .sw.projects { background: var(--b-projects); } .tip .sw.coursework { background: var(--b-coursework); } .tip .sw.industry { background: var(--b-industry); } .tip .sw.methods { background: var(--b-methods); } .tip .sw.teaching { background: var(--b-teaching); } .tip .sw.research { background: var(--b-research); }
 .tip-t { display: flex; justify-content: space-between; border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 4px; font-variant-numeric: tabular-nums; }
 .tip-pi { color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tip-f { color: var(--accent); margin-top: 4px; }
@@ -180,7 +180,7 @@ h1 {
 .legend [data-band="industry"] .sw { background: var(--b-industry); }
 .legend [data-band="methods"] .sw { background: var(--b-methods); }
 .legend [data-band="teaching"] .sw { background: var(--b-teaching); }
-.legend [data-band="software"] .sw { background: var(--b-software); }
+.legend [data-band="projects"] .sw { background: var(--b-projects); }
 .legend [data-band="research"] .sw { background: var(--b-research); }
 .legend [data-band="milestones"] .sw { background: var(--b-milestones); }
 .code { margin: 10px 0 0; }
@@ -246,8 +246,8 @@ main p:last-child { margin-bottom: 0; }
 .args > div:last-child { padding-bottom: 0; }
 .args dt { color: var(--text); padding-top: 4px; }
 .args dd { margin: 0; }
-#software .args > div { grid-template-columns: 1fr; gap: 4px; }
-#software .args dt { font-family: var(--serif); font-size: 1.1875rem; font-weight: 600; line-height: 1.35; padding: 0; }
+#projects .args > div { grid-template-columns: 1fr; gap: 4px; }
+#projects .args dt { font-family: var(--serif); font-size: 1.1875rem; font-weight: 600; line-height: 1.35; padding: 0; }
 .years dt { color: var(--text-2); }
 
 .more { margin: 20px 0 0; }
@@ -405,7 +405,7 @@ main > section.hero { padding-bottom: 40px; margin-bottom: 48px; }
    ========================================================= */
 :root {
   --b-research: #e69f00; --b-teaching: #009e73; --b-methods: #0072b2;
-  --b-industry: #cc79a7; --b-coursework: #999999; --b-software: #56b4e9;
+  --b-industry: #cc79a7; --b-coursework: #999999; --b-projects: #56b4e9;
 }
 
 /* portrait */
@@ -419,7 +419,7 @@ main > section.hero { padding-bottom: 40px; margin-bottom: 48px; }
 .navbar a[data-band="methods"]    { --band: var(--b-methods); }
 .navbar a[data-band="industry"]   { --band: var(--b-industry); }
 .navbar a[data-band="coursework"] { --band: var(--b-coursework); }
-.navbar a[data-band="software"]   { --band: var(--b-software); }
+.navbar a[data-band="projects"]   { --band: var(--b-projects); }
 .navbar li a[data-band][aria-current] { color: var(--text); border-bottom-color: var(--band); }
 
 /* chart key: centred over the plotting area (the plot starts 56px in, after the y-axis) */
@@ -435,7 +435,7 @@ main > section.hero { padding-bottom: 40px; margin-bottom: 48px; }
 .key [data-band="methods"] .sw { background: var(--b-methods); }
 .key [data-band="industry"] .sw { background: var(--b-industry); }
 .key [data-band="coursework"] .sw { background: var(--b-coursework); }
-.key [data-band="software"] .sw { background: var(--b-software); }
+.key [data-band="projects"] .sw { background: var(--b-projects); }
 
 /* alignment: the hero heading, the chart key, and the chart share one top line;
    the caption and code toggle sit on the plot's left edge, like the axis */

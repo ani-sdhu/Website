@@ -24,9 +24,9 @@
      Each band links to its section of the page. */
   var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
   var T0 = 2021.66, T1 = 2031.42, TOP = 120, PHD = 2026.6, WEEK = 1 / 52;
-  var BANDS = ["software", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
-  var HREF = { software: "#software", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
-  var INK = { software: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
+  var BANDS = ["projects", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
+  var HREF = { projects: "#projects", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
+  var INK = { projects: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
   function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.04), 2)); }
@@ -51,7 +51,7 @@
   function load(t) {
     var s = summer(t), phd = on(t, PHD);
     var l = {
-      software: 4 * on(t, 2025.6),
+      projects: 4 * on(t, 2025.6),
       coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, PHD) +
         14 * on(t, PHD, 2028.4)),
       industry: 2 + 8 * on(t, 2023.1, 2023.95) + s * (46 * on(t, 2021.6, 2024.6) + 20 * on(t, 2024.6, PHD)),
@@ -61,7 +61,7 @@
     };
     var extra = t < 2024.6 ? 14 : 12 * (1 - phd) + 4 * phd;          // summers run heavier
     var target = trend(t) + s * extra, used = 0;
-    ["software", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
+    ["projects", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
     l.research = Math.max(2, target - used);                         // research takes up the rest
     l.coursework += ramp(t, 2025.4, 2026.3, 9);                      // building toward the capstone
     l.methods += peak(t, 2028.3, 28);                                // crunch weeks
