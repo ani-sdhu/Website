@@ -91,21 +91,22 @@ h1 {
 .src.out { background: none; border-left-color: transparent; padding-top: 6px; padding-bottom: 0; }
 .plot { margin: 14px 0 0; }
 .plot svg { display: block; width: 100%; height: auto; overflow: visible; }
-.plot text { font-family: Helvetica, Arial, sans-serif; font-size: 12px; fill: var(--text); }
+.plot text { font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif; font-size: 12px; fill: var(--text-2); }
+.plot .event, .plot .readout { fill: var(--text); }
 .plot .frame, .plot .tick { fill: none; stroke: var(--ink); stroke-width: 1; }
 /* Okabe-Ito, the colour-blind-safe palette built into R (palette.colors) */
 .plot, .legend {
   --b-coursework: #999999; --b-methods: #0072b2; --b-teaching: #009e73; --b-software: #56b4e9;
   --b-research: #e69f00; --b-milestones: #d55e00;
 }
-.plot .band { stroke: var(--bg); stroke-width: 1; cursor: pointer; transition: opacity .15s; }
+.plot .band { stroke: none; cursor: pointer; transition: opacity .15s; }
 .plot .band.coursework { fill: var(--b-coursework); }
 .plot .band.methods { fill: var(--b-methods); }
 .plot .band.teaching { fill: var(--b-teaching); }
 .plot .band.software { fill: var(--b-software); }
 .plot .band.research { fill: var(--b-research); }
 .plot .band.milestones { fill: var(--b-milestones); }
-.plot .ahead .band { opacity: .38; }
+.plot .ahead .band { opacity: .45; }
 .plot .proj { fill: var(--tint); }
 .plot .phase { fill: none; stroke: var(--ink); stroke-width: 1; }
 .plot .split { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1 3; opacity: .55; }
@@ -114,11 +115,17 @@ h1 {
 .plot.focus .ahead .band { opacity: .14; }
 .plot.focus .band.on { opacity: 1; }
 .plot.focus .ahead .band.on { opacity: .6; }
-.plot .total { fill: none; stroke: var(--ink); stroke-width: 1.25; stroke-linejoin: round; }
-.plot .total.ahead { stroke-dasharray: 3 3; }
-.plot .today { stroke: var(--ink); stroke-width: 1; }
+.plot .total { fill: none; stroke: none; }
+.plot .total.ahead { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.plot .today { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.plot .grid { stroke: var(--rule); stroke-width: 1; }
+.plot .axis { stroke: var(--text-2); stroke-width: 1; }
+.plot .units { fill: var(--text-2); }
+.plot .proj-text { fill: var(--text-2); font-style: italic; }
+.plot .leader { stroke: var(--text-2); stroke-width: 1; }
+.plot .event { font-size: 11.5px; }
 .plot .cross { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
-.plot .note, .plot .now-text, .plot .readout { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+.plot .event, .plot .proj-text, .plot .readout { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 .plot .note { font-style: italic; }
 .plot .now-text { font-weight: 700; }
 .plot .readout { font-weight: 700; pointer-events: none; }

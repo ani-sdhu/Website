@@ -10,7 +10,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Source+Sans+3:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23276dc3'/%3E%3Cpath d='M6 23c5-9 15-9 20 0' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M6 8v15M26 8v15' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
@@ -43,17 +43,18 @@ term &lt;- 1 - 0.45 * pmax(0, cos(2 * pi * (wk - 0.54)))^4         <span class="
 on   &lt;- function(a, b = Inf) plogis(12 * (wk - a)) - plogis(12 * (wk - b))
 peak &lt;- function(at, h, w = 0.08) h * exp(-((wk - at) / w)^2)
 load &lt;- cbind(                                                    <span class="cm"># hours per week, by what serves them</span>
-  coursework = term * (22 * on(2021.6, 2025.4) + 8 * on(2025.4, 2028.4)),
+  coursework = term * (22 * on(2021.6, 2024.6) + 18 * on(2024.6, 2025.4) + 8 * on(2025.4, 2028.4)),
   methods    = term * (2 * on(2021.6, 2024.6) + 7 * on(2024.6, 2025.4) + 10 * on(2025.4, 2026.6) +
                        16 * on(2026.6, 2028.4) + 6 * on(2028.4)),
   teaching   = term * 15 * on(2026.6),
   software   = 4 * on(2025.6),
-  research   = term * (2 * on(2021.6, 2025.4) + 18 * on(2025.4, 2026.6) +
+  research   = term * (2 * on(2021.6, 2024.6) + 12 * on(2024.6, 2025.4) + 18 * on(2025.4, 2026.6) +
                        on(2026.6) * (10 + 26 * plogis(2.5 * (wk - 2028.6)))),
-  milestones = peak(2023.2, 5) + peak(2025.35, 8) + peak(2026.3, 12) +
+  milestones = peak(2023.2, 5) + peak(2025.37, 8) + peak(2026.3, 12) +
                peak(2028.3, 18) + peak(2029.3, 12) + peak(2031.3, 20, 0.1))
 stack &lt;- t(apply(load, 1, cumsum))
-plot(range(wk), c(0, 90), type = "n", xlab = "", ylab = "Load (hours per week)")
+plot(range(wk), c(0, 90), type = "n", bty = "n", las = 1, xlab = "", ylab = "")
+abline(h = seq(20, 80, 20), col = "grey88")
 for (k in ncol(stack):1)
   polygon(c(wk, rev(wk)), c(stack[, k], 0 * wk), border = NA,
           col = palette.colors(9, "Okabe-Ito")[c(9, 6, 4, 3, 2, 7)][k])</code></pre>
@@ -68,7 +69,7 @@ for (k in ncol(stack):1)
       <div class="plot" id="plot"></div>
       <pre class="src out" aria-hidden="true"><code>round(load[which.min(abs(wk - now)), ])
 <span id="live-out"></span></code></pre>
-      <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Coursework carries the B.S., methods pick up in senior year, the M.I.P. is mostly research, and the Ph.D. adds teaching and more hours overall. The milestones are the peakers. The shaded side, right of today, is projected. Click a band to go to that section.</figcaption>
+      <figcaption>My time since my first semester, drawn the way a grid operator draws load: hours per week, stacked by what serves them. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The Ph.D. adds teaching and more hours overall. Everything in the shaded area is projected. Click a band to go to that section.</figcaption>
     </figure>
   </header>
 

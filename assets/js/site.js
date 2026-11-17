@@ -18,7 +18,7 @@
   setTheme(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
   $$("[data-theme-toggle]").forEach(function (b) { b.addEventListener("click", flipTheme); });
 
-  /* ---------- the figure: my Ph.D. as a load curve ----------
+  /* ---------- the figure: my time as a load curve ----------
      Hours per week, stacked by what serves them, like a grid operator's
      dispatch stack. The functions below match the R code printed above
      the plot. Each band links to its section of the page. */
@@ -33,22 +33,25 @@
   function load(t) {
     var k = term(t);
     return {
-      coursework: k * (22 * on(t, 2021.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)),
+      coursework: k * (22 * on(t, 2021.6, 2024.6) + 18 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)),
       methods: k * (2 * on(t, 2021.6, 2024.6) + 7 * on(t, 2024.6, 2025.4) + 10 * on(t, 2025.4, 2026.6) +
         16 * on(t, 2026.6, 2028.4) + 6 * on(t, 2028.4)),
       teaching: k * 15 * on(t, 2026.6),
       software: 4 * on(t, 2025.6),
-      research: k * (2 * on(t, 2021.6, 2025.4) + 18 * on(t, 2025.4, 2026.6) +
+      research: k * (2 * on(t, 2021.6, 2024.6) + 12 * on(t, 2024.6, 2025.4) + 18 * on(t, 2025.4, 2026.6) +
         on(t, 2026.6) * (10 + 26 * plogis(2.5 * (t - 2028.6)))),
-      milestones: peak(t, 2023.2, 5) + peak(t, 2025.35, 8) + peak(t, 2026.3, 12) +
+      milestones: peak(t, 2023.2, 5) + peak(t, 2025.37, 8) + peak(t, 2026.3, 12) +
         peak(t, 2028.3, 18) + peak(t, 2029.3, 12) + peak(t, 2031.3, 20, 0.1)
     };
   }
-  var NOTES = [
-    { at: 2023.2, text: "conference", wide: true }, { at: 2025.35, text: "B.S." }, { at: 2026.3, text: "capstone", wide: true },
-    { at: 2028.3, text: "comps" }, { at: 2029.3, text: "prospectus", wide: true }, { at: 2031.3, text: "defense", anchor: "end" }
+  // row: 1 is the top line of labels, 3 the lowest. brief: the label on phones.
+  var EVENTS = [
+    { at: 2023.2, text: "First conference", brief: "1st conf.", row: 3, anchor: "middle" },
+    { at: 2024.6, text: "M.I.P. begins", brief: "M.I.P.", row: 3, anchor: "middle" },
+    { at: 2025.37, text: "B.S. graduation", brief: "B.S.", row: 2, anchor: "middle" },
+    { at: 2026.3, text: "M.I.P. capstone", brief: "capstone", row: 1, anchor: "end" },
+    { at: 2026.6, text: "Ph.D. begins", brief: "Ph.D.", row: 2, anchor: "start" }
   ];
-  var PHASES = [{ from: 2021.6, to: 2025.4, text: "B.S." }, { from: 2025.4, to: 2026.6, text: "M.I.P." }, { from: 2026.6, to: 2031.5, text: "Ph.D." }];
   function yearNow() {
     var d = new Date(), y = d.getUTCFullYear(), s0 = Date.UTC(y, 0, 1);
     return y + (d - s0) / (Date.UTC(y + 1, 0, 1) - s0);
@@ -60,8 +63,8 @@
   var view = null;
 
   function draw(animate) {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 290 : 350;
-    var m = { l: 56, r: 14, t: 14, b: 56 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
+    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 280 : 340;
+    var m = { l: 40, r: 10, t: 24, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
     var now = Math.min(Math.max(yearNow(), T0), T1);
     var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
     var Y = function (v) { return base - v / TOP * ph; };
@@ -86,41 +89,43 @@
     var total = "";
     for (i = 0; i <= N; i++) total += (i ? "L" : "M") + f1(X(ts[i])) + " " + f1(Y(cum[i].milestones));
 
-    var nx = f1(X(now)), o = "";
+    var nx = f1(X(now)), o = "", x, y;
     o += '<defs><clipPath id="clip-past" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + f1(nx - m.l) + '" height="' + ph + '"/></clipPath>' +
          '<clipPath id="clip-ahead" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/></clipPath>' +
          '<clipPath id="clip-right"><rect x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/></clipPath></defs>';
+
+    // projected region first, then gridlines, then the stack on top
     o += '<rect class="proj" x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/>';
-    PHASES.slice(1).forEach(function (p) { var sx = f1(X(p.from)); o += '<path class="split" d="M' + sx + " " + m.t + "V" + base + '"/>'; });
+    [20, 40, 60, 80].forEach(function (v) {
+      y = f1(Y(v));
+      o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>';
+    });
     o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands + '<path class="total ahead" d="' + total + '"/></g></g>';
     o += '<g clip-path="url(#clip-past)">' + bands + '<path class="total" d="' + total + '"/></g>';
-    o += '<rect class="frame" x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/>';
+    o += '<path class="axis" d="M' + m.l + " " + base + "H" + (m.l + pw) + '"/>';
 
-    for (var yr = 2022; yr <= 2031; yr += small ? 2 : 1) {
-      var x = f1(X(yr));
-      o += '<path class="tick" d="M' + x + " " + base + 'v6"/><text x="' + x + '" y="' + (base + 21) + '" text-anchor="middle">' + yr + "</text>";
-    }
     [0, 20, 40, 60, 80].forEach(function (v) {
-      var y = f1(Y(v));
-      o += '<path class="tick" d="M' + m.l + " " + y + 'h-6"/><text transform="translate(' + (m.l - 11) + " " + y + ') rotate(-90)" text-anchor="middle">' + v + "</text>";
+      o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>";
     });
-    o += '<text transform="translate(13 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Load (hours per week)</text>';
-    // the degree each stretch belongs to, bracketed under the year axis
-    PHASES.forEach(function (p) {
-      var a = f1(X(p.from) + 2), b = f1(X(p.to) - 2), yb = base + 32;
-      o += '<path class="phase" d="M' + a + " " + (yb - 4) + "V" + yb + "H" + b + "V" + (yb - 4) + '"/>';
-      o += '<text class="tag" x="' + f1((a + b) / 2) + '" y="' + (yb + 15) + '" text-anchor="middle">' + p.text + "</text>";
-    });
-    NOTES.forEach(function (n) {
-      if (small && n.wide) return;
-      var l = load(n.at), sum = 0;
-      BANDS.forEach(function (b) { sum += l[b]; });
-      o += '<text class="note" x="' + f1(X(n.at) + (n.anchor === "end" ? 4 : 0)) + '" y="' + f1(Y(sum) - 8) + '" text-anchor="' + (n.anchor || "middle") + '">' + n.text + "</text>";
-    });
+    o += '<text class="units" x="' + (m.l - 8) + '" y="' + (m.t - 8) + '">hours per week</text>';
+    for (var yr = 2022; yr <= 2031; yr += small ? 2 : 1) {
+      x = f1(X(yr));
+      o += '<path class="tick" d="M' + x + " " + base + 'v5"/><text x="' + x + '" y="' + (base + 20) + '" text-anchor="middle">' + yr + "</text>";
+    }
+
+    // the projection boundary, labelled once, the way EIA marks a forecast
     o += '<path class="today" d="M' + nx + " " + m.t + "V" + base + '"/>';
-    var ly = small ? base - 8 : m.t + 14;
-    o += '<text class="now-text" x="' + (nx - 6) + '" y="' + ly + '" text-anchor="end">observed</text>';
-    o += '<text class="now-text" x="' + (nx + 6) + '" y="' + ly + '">projected</text>';
+    o += '<text class="proj-text" x="' + (nx + 6) + '" y="' + (m.t + 14) + '">projected</text>';
+
+    // events: a label on its row, and a thin leader down to the top of the stack
+    var rowY = function (r) { return m.t + 14 + (r - 1) * 16; };
+    EVENTS.forEach(function (ev) {
+      var l = load(ev.at), sum = 0;
+      BANDS.forEach(function (b) { sum += l[b]; });
+      var ex = f1(X(ev.at)), ly = rowY(ev.row), dx = ev.anchor === "end" ? 3 : ev.anchor === "start" ? -3 : 0;
+      o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + f1(Y(sum) - 2) + '"/>';
+      o += '<text class="event" x="' + f1(ex + dx) + '" y="' + ly + '" text-anchor="' + ev.anchor + '">' + (small ? ev.brief : ev.text) + "</text>";
+    });
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><text class="readout" id="readout" visibility="hidden"></text>';
 
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" aria-hidden="true">' + o + "</svg>";
