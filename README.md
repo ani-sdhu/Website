@@ -3,10 +3,10 @@
 A one-page academic site laid out like an R help page: a documentation strip at
 the top, monospace headings, a two-column "arguments" table for structured
 facts, and the Environment list as the contents menu. The masthead figure is an
-R Markdown style chunk: a model of the author's energy over his life, drawn as
-a power line. Each transmission tower is as tall as the energy in that stretch
-of life, every wire between towers is a catenary, the part after today is
-dotted, and a pulse travels along a wire from birth to today.
+R Markdown style chunk: the author's Ph.D. drawn as a load curve, hours per
+week stacked by what serves them (methods, teaching, software, research, and the
+milestone "peakers"). Each band links to its section, so the chart doubles as a
+menu.
 
 It is plain HTML and CSS with a small script. There is no build step, and the
 page reads fine with JavaScript turned off.
@@ -28,10 +28,10 @@ Open `index.html` and change the text. Each section is a `<section>` with an
 `<nav class="env">`. The small numbers in that list are counts of entries; keep
 them in step with the page.
 
-The towers are the `LIFE` list near the top of the figure code in
-`assets/js/site.js`: `t` is the year, `e` is the height, and `text` is the
-label. The same years and heights are printed as R in the code block in
-`index.html`. If you move a tower, change it in both places.
+The curve is the `load()` function near the top of the figure code in
+`assets/js/site.js`, with `t` in decimal years. The same function is printed as
+R in the code block in `index.html`. If you move a milestone or change a band,
+change it in both places. Milestone labels are the `NOTES` list.
 
 ## Previewing locally
 

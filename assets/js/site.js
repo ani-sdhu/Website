@@ -18,173 +18,154 @@
   setTheme(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
   $$("[data-theme-toggle]").forEach(function (b) { b.addEventListener("click", flipTheme); });
 
-  /* ---------- the figure: my life as a power line ----------
-     One tower per stretch of life, as tall as the energy in it. Every wire
-     is a catenary through two attachment points, computed by wire(), which
-     is the same function printed as R above the plot. */
+  /* ---------- the figure: my Ph.D. as a load curve ----------
+     Hours per week, stacked by what serves them, like a grid operator's
+     dispatch stack. The functions below match the R code printed above
+     the plot. Each band links to its section of the page. */
   var chunk = $("#chunk"), holder = $("#plot");
-  var T0 = 2002, T1 = 2032.4, TOP = 3.9, BORN = 2002.58;
-  // wide: skipped on narrow screens. quiet: label hidden on narrow screens.
-  var LIFE = [
-    { t: 2002.58, e: 0.5 }, { t: 2005.6, e: 0.5 }, { t: 2008.6, e: 0.55, wide: true },
-    { t: 2009.6, e: 1, text: "moved to the U.S., age 6", brief: "U.S., age 6", anchor: "start" },
-    { t: 2013, e: 1 }, { t: 2016.5, e: 1 },
-    { t: 2020, e: 1.25, text: "first job, age 17", anchor: "end", quiet: true },
-    { t: 2023, e: 1.25 },
-    { t: 2025.9, e: 1.95, text: "master's", anchor: "end", wide: true },
-    { t: 2026.75, e: 2.55, text: "Ph.D. begins", brief: "Ph.D.", anchor: "end" },
-    { t: 2028.3, e: 3.05, text: "comps", anchor: "middle", quiet: true },
-    { t: 2029.8, e: 1.75, wide: true },
-    { t: 2031.3, e: 2.95, text: "defense", anchor: "end", quiet: true },
-    { t: 2033, e: 2 }
-  ];
-
-  // the catenary through p and q, each [year, energy]
-  function wire(p, q, slack) {
-    var a = (slack || 2) * (q[0] - p[0]);
-    var x0 = (p[0] + q[0]) / 2 - a * Math.asinh((q[1] - p[1]) / (2 * a * Math.sinh((q[0] - p[0]) / (2 * a))));
-    var c = p[1] - a * Math.cosh((p[0] - x0) / a);
-    return function (x) { return a * Math.cosh((x - x0) / a) + c; };
-  }
-  function yearNow() {
-    var d = new Date(), y = d.getUTCFullYear(), s = Date.UTC(y, 0, 1);
-    return y + (d - s) / (Date.UTC(y + 1, 0, 1) - s);
-  }
-  var view = null, moving = !calm, visible = true, head = BORN - 1.5;
-
-  // a lattice tower standing at (x, ground) with its peak at (x, top)
-  function tower(x, ground, top, k, slim) {
-    var h = ground - top, bw = Math.min(0.1 * h, 13 * k + 3) * (slim ? 0.6 : 1), tw = 2.2 * k, d = "", att = [];
-    var f1 = function (n) { return Math.round(n * 10) / 10; };
-    var half = function (y) { return tw + (bw - tw) * (y - top) / h; };   // body half-width at height y
-    d += "M" + f1(x - bw) + " " + ground + "L" + f1(x - tw) + " " + f1(top + 2 * k) + "L" + f1(x) + " " + f1(top) + "L" + f1(x + tw) + " " + f1(top + 2 * k) + "L" + f1(x + bw) + " " + ground;
-    var n = Math.max(2, Math.round(h / 20)), y0 = top + 36 * k;
-    if (y0 < ground - 6) {
-      for (var i = 0; i < n; i++) {
-        var ya = y0 + (ground - y0) * i / n, yb = y0 + (ground - y0) * (i + 1) / n;
-        d += "M" + f1(x - half(ya)) + " " + f1(ya) + "L" + f1(x + half(yb)) + " " + f1(yb) + "M" + f1(x + half(ya)) + " " + f1(ya) + "L" + f1(x - half(yb)) + " " + f1(yb);
-        d += "M" + f1(x - half(ya)) + " " + f1(ya) + "H" + f1(x + half(ya));
-      }
-    }
-    [[9, 10], [21, 13], [33, 16]].forEach(function (arm) {
-      var y = top + arm[0] * k, L = arm[1] * k;
-      d += "M" + f1(x - L) + " " + f1(y) + "H" + f1(x + L) + "M" + f1(x - L) + " " + f1(y) + "L" + f1(x) + " " + f1(y - 6 * k) + "L" + f1(x + L) + " " + f1(y);
-      d += "M" + f1(x - L) + " " + f1(y) + "v" + f1(4 * k) + "M" + f1(x + L) + " " + f1(y) + "v" + f1(4 * k);
-      att.push([x - L, y + 4 * k], [x + L, y + 4 * k]);
-    });
-    att.push([x, top]);            // the shield wire rides on the peak
-    return { d: d, att: att };
-  }
-
-  function draw() {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 280 : 350;
-    var m = { l: 56, r: 14, t: 14, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, ground = m.t + ph;
-    var now = Math.min(yearNow(), 2032);
-    var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
-    var Tx = function (x) { return T0 + (x - m.l) / pw * (T1 - T0); };
-    var Y = function (e) { return ground - e / TOP * ph; };
-    var Ey = function (y) { return (ground - y) / ph * TOP; };
-    var f1 = function (n) { return Math.round(n * 10) / 10; };
-    var list = LIFE.filter(function (p) { return !(small && p.wide); });
-    var o = "", x, y;
-
-    o += '<clipPath id="plot-clip"><rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/></clipPath>';
-    for (var yr = 2005; yr <= 2030; yr += small ? 10 : 5) {
-      x = f1(X(yr));
-      o += '<path class="tick" d="M' + x + " " + ground + 'v6"/><text x="' + x + '" y="' + (ground + 21) + '" text-anchor="middle">' + yr + "</text>";
-    }
-    [0, 1, 2, 3].forEach(function (v) {
-      y = f1(Y(v));
-      o += '<path class="tick" d="M' + m.l + " " + y + 'h-6"/><text transform="translate(' + (m.l - 11) + " " + y + ') rotate(-90)" text-anchor="middle">' + v + "</text>";
-    });
-    o += '<text transform="translate(13 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Energy</text>';
-
-    var built = list.map(function (p) {
-      var top = Y(p.e), k = Math.min(1, Math.max(0.35, (ground - top) / 150)) * (small ? 0.62 : 1);
-      return tower(X(p.t), ground, top, k, small);
-    });
-
-    // wires: seven per span, each a catenary in (year, energy) space
-    var past = "", ahead = "", live = [], peak = [];
-    for (var i = 0; i < built.length - 1; i++) {
-      for (var j = 0; j < 7; j++) {
-        var P = built[i].att[j], Q = built[i + 1].att[j];
-        var fn = wire([Tx(P[0]), Ey(P[1])], [Tx(Q[0]), Ey(Q[1])], j === 6 ? 3 : 2);
-        var a = "", b = "";
-        for (x = P[0]; x < Q[0] + 1.5; x += 1.5) {
-          var xx = Math.min(x, Q[0]), t = Tx(xx), pt = f1(xx) + " " + f1(Y(fn(t)));
-          if (t <= now) a += (a ? "L" : "M") + pt; else b += (b ? "L" : "M") + pt;
-        }
-        past += a; ahead += b;
-        if (j === 1) live.push({ from: Tx(P[0]), to: Tx(Q[0]), fn: fn });
-        if (j === 6) peak.push({ from: list[i].t, to: list[i + 1].t, fn: wire([list[i].t, list[i].e], [list[i + 1].t, list[i + 1].e]) });
-      }
-    }
-    var at = function (segs, t) {
-      for (var s = 0; s < segs.length; s++) if (t >= segs[s].from && t <= segs[s].to) return segs[s].fn(t);
-      return null;
+  var T0 = 2026.6, T1 = 2031.5, TOP = 90;
+  var BANDS = ["methods", "teaching", "software", "research", "milestones"];
+  var HREF = { methods: "#methods", teaching: "#teaching", software: "#software", research: "#research", milestones: "#education" };
+  function plogis(x) { return 1 / (1 + Math.exp(-x)); }
+  function term(t) { return 1 - 0.45 * Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 4); }
+  function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.08), 2)); }
+  function load(t) {
+    var k = term(t);
+    return {
+      methods: k * (6 + 16 * plogis(-6 * (t - 2028.4))),
+      teaching: k * 10,
+      software: 4,
+      research: k * (8 + 30 * plogis(2.5 * (t - 2028.6))),
+      milestones: peak(t, 2028.3, 18) + peak(t, 2029.3, 12) + peak(t, 2031.3, 20, 0.1)
     };
+  }
+  var NOTES = [{ at: 2028.3, text: "comps" }, { at: 2029.3, text: "prospectus" }, { at: 2031.3, text: "defense" }];
+  function yearNow() {
+    var d = new Date(), y = d.getUTCFullYear(), s0 = Date.UTC(y, 0, 1);
+    return y + (d - s0) / (Date.UTC(y + 1, 0, 1) - s0);
+  }
+  function season(t) {
+    var y = Math.floor(t), m = Math.floor((t - y) * 12);
+    return (m < 5 ? "Spring " : m < 7 ? "Summer " : "Fall ") + y;
+  }
+  var view = null;
 
-    o += '<g clip-path="url(#plot-clip)"><path class="wire ahead" d="' + ahead + '"/><path class="wire" d="' + past + '"/>';
-    built.forEach(function (b, n) { o += '<path class="tower' + (list[n].t > now ? " ahead" : "") + '" d="' + b.d + '"/>'; });
-    o += '<path class="charge" id="charge"/></g>';
+  function draw(animate) {
+    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 260 : 320;
+    var m = { l: 56, r: 14, t: 14, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
+    var now = Math.min(Math.max(yearNow(), T0), T1);
+    var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
+    var Y = function (v) { return base - v / TOP * ph; };
+    var f1 = function (n) { return Math.round(n * 10) / 10; };
+    var N = Math.round(pw / 2), ts = [], cum = [];
+    for (var i = 0; i <= N; i++) {
+      var t = T0 + (T1 - T0) * i / N, l = load(t), run = 0, row = {};
+      BANDS.forEach(function (b) { run += l[b]; row[b] = run; });
+      ts.push(t); cum.push(row);
+    }
+    // one polygon per band: the top edge of this band, then back along the top of the one below
+    function bandPath(k) {
+      var top = "", bot = "";
+      for (var j = 0; j <= N; j++) top += (j ? "L" : "M") + f1(X(ts[j])) + " " + f1(Y(cum[j][BANDS[k]]));
+      for (j = N; j >= 0; j--) bot += "L" + f1(X(ts[j])) + " " + f1(Y(k ? cum[j][BANDS[k - 1]] : 0));
+      return top + bot + "Z";
+    }
+    var bands = "";
+    BANDS.forEach(function (b, k) {
+      bands += '<a href="' + HREF[b] + '" tabindex="-1" data-band="' + b + '"><path class="band ' + b + '" d="' + bandPath(k) + '"/></a>';
+    });
+    var total = "";
+    for (i = 0; i <= N; i++) total += (i ? "L" : "M") + f1(X(ts[i])) + " " + f1(Y(cum[i].milestones));
+
+    var nx = f1(X(now)), o = "";
+    o += '<defs><clipPath id="clip-past" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + f1(nx - m.l) + '" height="' + ph + '"/></clipPath>' +
+         '<clipPath id="clip-ahead" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/></clipPath>' +
+         '<clipPath id="clip-right"><rect x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/></clipPath></defs>';
+    o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands + '<path class="total ahead" d="' + total + '"/></g></g>';
+    o += '<g clip-path="url(#clip-past)">' + bands + '<path class="total" d="' + total + '"/></g>';
     o += '<rect class="frame" x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/>';
 
-    list.forEach(function (p) {
-      if (!p.text || (small && p.quiet)) return;
-      var dx = p.anchor === "end" ? -5 : p.anchor === "start" ? 5 : 0;
-      o += '<text class="note" x="' + f1(X(p.t) + dx) + '" y="' + f1(Y(p.e) - 8) + '" text-anchor="' + p.anchor + '">' + (small && p.brief ? p.brief : p.text) + "</text>";
+    for (var yr = 2027; yr <= 2031; yr++) {
+      var x = f1(X(yr));
+      o += '<path class="tick" d="M' + x + " " + base + 'v6"/><text x="' + x + '" y="' + (base + 21) + '" text-anchor="middle">' + yr + "</text>";
+    }
+    [0, 20, 40, 60, 80].forEach(function (v) {
+      var y = f1(Y(v));
+      o += '<path class="tick" d="M' + m.l + " " + y + 'h-6"/><text transform="translate(' + (m.l - 11) + " " + y + ') rotate(-90)" text-anchor="middle">' + v + "</text>";
     });
-    var nx = f1(X(now)), ny = f1(Y(at(live, now)));
-    o += '<circle class="here" id="here" cx="' + nx + '" cy="' + ny + '" r="4.5"/>';
-    o += '<text class="now-text" x="' + (nx + 9) + '" y="' + (ny + 4) + '">today</text>';
+    o += '<text transform="translate(13 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Load (hours per week)</text>';
+    NOTES.forEach(function (n) {
+      var l = load(n.at), sum = 0;
+      BANDS.forEach(function (b) { sum += l[b]; });
+      o += '<text class="note" x="' + f1(X(n.at)) + '" y="' + f1(Y(sum) - 8) + '" text-anchor="middle">' + n.text + "</text>";
+    });
+    o += '<path class="today" d="M' + nx + " " + m.t + "V" + base + '"/>';
+    o += '<text class="now-text" x="' + (nx + 6) + '" y="' + (m.t + 14) + '">today</text>';
+    o += '<path class="cross" id="cross" d="" visibility="hidden"/><text class="readout" id="readout" visibility="hidden"></text>';
 
-    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="A power line drawn across a chart of my life from 2002 to 2032. Each transmission tower is as tall as my energy at that time. The towers are short until 2008, rise sharply after I moved to the United States at six, step up at a first job at 17, and are tallest at the master\'s degree and the start of the Ph.D. Wires sag between the towers. After today the towers and wires are dotted, with tall towers planned for comprehensive exams and the defense. A pulse travels along a wire from birth to today.">' + o + "</svg>";
-    view = { X: X, Y: Y, now: now, live: live, at: at, pxPerYear: pw / (T1 - T0), charge: holder.querySelector("#charge"), here: holder.querySelector("#here") };
-    $("#live-out").textContent = at(peak, now).toFixed(2);
-    pulse();
+    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" aria-hidden="true">' + o + "</svg>";
+    view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, small: small, svg: holder.querySelector("svg") };
+
+    var l0 = load(now), names = BANDS, vals = names.map(function (b) { return String(Math.round(l0[b])); });
+    var w = names.map(function (n, i) { return Math.max(n.length, vals[i].length); });
+    var padL = function (t, n) { return new Array(n - t.length + 1).join(" ") + t; };
+    $("#live-out").textContent = "## " + names.map(function (n, i) { return padL(n, w[i]); }).join(" ") + "\n## " +
+      vals.map(function (v, i) { return padL(v, w[i]); }).join(" ");
   }
 
-  // a short burst of oscillation centred on `head`, riding on one conductor
-  function pulse() {
-    var v = view, d = "", from = Math.max(BORN, head - 1.5), to = Math.min(v.now, head + 1.5);
-    for (var t = from; t <= to; t += 0.75 / v.pxPerYear) {
-      var base = v.at(v.live, t);
-      if (base === null) continue;
-      var wob = 0.2 * Math.exp(-Math.pow((t - head) / 0.6, 2)) * Math.sin(2 * Math.PI * 3.2 * (t - head));
-      d += (d ? "L" : "M") + Math.round(v.X(t) * 10) / 10 + " " + Math.round(v.Y(base + wob) * 10) / 10;
+  // highlight a band everywhere it appears (plot and legend)
+  function focus(band) {
+    holder.classList.toggle("focus", !!band);
+    $$("#plot .band").forEach(function (p) { p.classList.toggle("on", !!band && p.classList.contains(band)); });
+    $$(".legend a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-band") === band); });
+  }
+
+  // crosshair and readout: season, total hours, and the band under the pointer
+  function track(e) {
+    var v = view, r = v.svg.getBoundingClientRect(), sx = v.W / r.width;
+    var px = (e.clientX - r.left) * sx, py = (e.clientY - r.top) * sx;
+    var cross = $("#cross"), out = $("#readout");
+    if (px < v.m.l || px > v.m.l + v.pw || py < v.m.t || py > v.m.t + v.ph) {
+      cross.setAttribute("visibility", "hidden"); out.setAttribute("visibility", "hidden"); return;
     }
-    v.charge.setAttribute("d", d);
-    var near = Math.max(0, 1 - Math.abs(head - v.now) / 0.7);
-    v.here.setAttribute("r", (4.5 + 3.5 * near).toFixed(1));
+    var t = T0 + (px - v.m.l) / v.pw * (T1 - T0), l = load(t), run = 0, under = null;
+    var val = (v.m.t + v.ph - py) / v.ph * TOP;
+    BANDS.forEach(function (b) { if (!under && val <= run + l[b]) under = b; run += l[b]; });
+    cross.setAttribute("d", "M" + px + " " + v.m.t + "V" + (v.m.t + v.ph));
+    cross.setAttribute("visibility", "visible");
+    var text = season(t) + ": " + Math.round(run) + " h/week" + (under ? ", " + Math.round(l[under]) + " " + under : "");
+    var left = px > v.m.l + v.pw * 0.55;
+    out.setAttribute("x", left ? px - 8 : px + 8);
+    out.setAttribute("y", v.m.t + v.ph - 10);
+    out.setAttribute("text-anchor", left ? "end" : "start");
+    out.textContent = text;
+    out.setAttribute("visibility", "visible");
   }
 
   chunk.hidden = false;
-  draw();
-  var last = 0;
-  function frame(ts) {
-    if (moving && visible && !document.hidden && ts - last > 33) {
-      var dt = Math.min(100, ts - last) / 1000;
-      last = ts;
-      head += dt * (view.now - BORN + 3) / 5.5;            // one crossing takes about 5.5 seconds
-      if (head > view.now + 3) head = BORN - 1.5;          // rest a moment, then start again
-      pulse();
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(holder);
-  }
-  var pauseBtn = $("#plot-pause");
-  function showPause() {
-    pauseBtn.textContent = moving ? "Pause" : "Play";
-    pauseBtn.setAttribute("aria-pressed", moving ? "false" : "true");
-  }
-  showPause();
-  pauseBtn.addEventListener("click", function () { moving = !moving; showPause(); });
-  var redraw = null;
-  window.addEventListener("resize", function () { clearTimeout(redraw); redraw = setTimeout(draw, 120); });
+  draw(!calm);
+  holder.addEventListener("pointerover", function (e) {
+    var a = e.target.closest("[data-band]");
+    focus(a ? a.getAttribute("data-band") : null);
+  });
+  holder.addEventListener("pointermove", track);
+  holder.addEventListener("pointerleave", function () {
+    focus(null);
+    $("#cross").setAttribute("visibility", "hidden");
+    $("#readout").setAttribute("visibility", "hidden");
+  });
+  $$(".legend a").forEach(function (a) {
+    var b = a.getAttribute("data-band");
+    a.addEventListener("pointerenter", function () { focus(b); });
+    a.addEventListener("pointerleave", function () { focus(null); });
+    a.addEventListener("focus", function () { focus(b); });
+    a.addEventListener("blur", function () { focus(null); });
+  });
+  var redraw = null, lastW = holder.clientWidth;
+  window.addEventListener("resize", function () {
+    clearTimeout(redraw);
+    redraw = setTimeout(function () { if (holder.clientWidth !== lastW) { lastW = holder.clientWidth; draw(false); } }, 120);
+  });
 
   /* ---------- contents rail ---------- */
   var env = $(".env"), toggle = $("#env-toggle"), now = $("#env-now");

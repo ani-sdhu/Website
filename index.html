@@ -38,26 +38,30 @@
     </div>
 
     <figure class="chunk" id="chunk" hidden>
-      <pre class="src" aria-hidden="true"><code>life &lt;- data.frame(                                   <span class="cm"># one tower per stretch of my life</span>
-  year   = c(2002.58, 2005.6, 2008.6, 2009.6, 2013, 2016.5, 2020, 2023, 2025.9, 2026.75, 2028.3, 2029.8, 2031.3),
-  energy = c(0.5,     0.5,    0.55,   1,      1,    1,      1.25, 1.25, 1.95,   2.55,    3.05,   1.75,   2.95))
-wire &lt;- function(p, q, slack = 2) {                    <span class="cm"># the catenary through two tower tops</span>
-  a  &lt;- slack * (q[1] - p[1])
-  x0 &lt;- (p[1] + q[1]) / 2 - a * asinh((q[2] - p[2]) / (2 * a * sinh((q[1] - p[1]) / (2 * a))))
-  function(x) a * cosh((x - x0) / a) + p[2] - a * cosh((p[1] - x0) / a)
-}
-plot(life, type = "h", ylim = c(0, 3.9))
-for (i in 2:nrow(life)) {
-  p &lt;- unlist(life[i - 1, ]); q &lt;- unlist(life[i, ])
-  curve(wire(p, q)(x), p[1], q[1], add = TRUE)
-}</code></pre>
+      <pre class="src" aria-hidden="true"><code>wk   &lt;- seq(2026.6, 2031.5, by = 1/52)                       <span class="cm"># every week of the Ph.D.</span>
+term &lt;- 1 - 0.45 * pmax(0, cos(2 * pi * (wk - 0.54)))^4          <span class="cm"># summers run light</span>
+peak &lt;- function(at, h, w = 0.08) h * exp(-((wk - at) / w)^2)
+load &lt;- cbind(                                                    <span class="cm"># hours per week, by what serves them</span>
+  methods    = term * (6 + 16 * plogis(-6 * (wk - 2028.4))),
+  teaching   = term * 10,
+  software   = 4,
+  research   = term * (8 + 30 * plogis(2.5 * (wk - 2028.6))),
+  milestones = peak(2028.3, 18) + peak(2029.3, 12) + peak(2031.3, 20, 0.1))
+stack &lt;- t(apply(load, 1, cumsum))
+plot(range(wk), c(0, 90), type = "n", xlab = "", ylab = "Load (hours per week)")
+for (k in ncol(stack):1)
+  polygon(c(wk, rev(wk)), c(stack[, k], 0 * wk), col = palette.colors(6, "Okabe-Ito")[k + 1], border = NA)</code></pre>
+      <nav class="legend" aria-label="Sections in the chart">
+        <a href="#methods" data-band="methods"><span class="sw" aria-hidden="true"></span>methods</a>
+        <a href="#teaching" data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</a>
+        <a href="#software" data-band="software"><span class="sw" aria-hidden="true"></span>software</a>
+        <a href="#research" data-band="research"><span class="sw" aria-hidden="true"></span>research</a>
+        <a href="#education" data-band="milestones"><span class="sw" aria-hidden="true"></span>milestones</a>
+      </nav>
       <div class="plot" id="plot"></div>
-      <pre class="src out" aria-hidden="true"><code>wire(c(2026.75, 2.55), c(2028.3, 3.05))(now)
-## [1] <span id="live-out"></span></code></pre>
-      <p class="chunk-tools">
-        <button type="button" class="text-btn" id="plot-pause" aria-pressed="false">Pause</button>
-      </p>
-      <figcaption>A model of my energy, not a measurement. Each tower is as tall as my energy in that stretch of life: low until I moved to the United States at six, highest in graduate school. Every wire is a catenary, the curve a hanging cable takes. The dotted towers are the forecast, comps and then the defense, and the pulse runs from the day I was born to today.</figcaption>
+      <pre class="src out" aria-hidden="true"><code>round(load[which.min(abs(wk - now)), ])
+<span id="live-out"></span></code></pre>
+      <figcaption>My Ph.D. drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Coursework is the early baseload and research takes over later. Comps, the prospectus, and the defense are the peakers. Everything right of today is a forecast. Click a band to go to that section.</figcaption>
     </figure>
   </header>
 
