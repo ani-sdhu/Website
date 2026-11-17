@@ -43,24 +43,31 @@
   function gap(t, at, w) { var d = Math.abs(frac(t) - at); d = Math.min(d, 1 - d); return Math.exp(-Math.pow(d / w, 2)); }
   // Holiday-adjusted, like seasonally adjusted data: holiday weeks are marked under the axis, not dipped.
   // Term-time load is flat through the B.S., then rises steadily from the M.I.P. to the defense.
-  function trend(t) { return 38 + 8 * on(t, 2023.1, 2023.95) + 14 * Math.min(1, Math.max(0, (t - 2024.6) / 6.7)); }
+  function clamp01(x) { return Math.min(1, Math.max(0, x)); }
+  function trend(t) {
+    var phd = on(t, PHD);
+    return (1 - phd) * (38 + 8 * on(t, 2023.1, 2023.95) + 4 * clamp01((t - 2024.6) / 2)) +   // B.S. and M.I.P.
+      phd * (60 + 6 * clamp01((t - PHD) / 4.7));                                              // the Ph.D. starts near 60
+  }
   function load(t) {
     var s = summer(t), phd = on(t, PHD);
     var l = {
       software: 4 * on(t, 2025.6),
-      coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)),
+      coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, PHD) +
+        14 * on(t, PHD, 2028.4)),
       industry: 2 + 8 * on(t, 2023.1, 2023.95) + s * (46 * on(t, 2021.6, 2024.6) + 20 * on(t, 2024.6, PHD)),
       methods: (1 - 0.5 * s) * (3 * on(t, 2021.6, 2024.6) + 8 * on(t, 2024.6, 2025.4) + 12 * on(t, 2025.4, PHD) +
-        10 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)),
-      teaching: (1 - s) * 10 * phd
+        16 * on(t, PHD, 2028.4) + 8 * on(t, 2028.4)),
+      teaching: (1 - s) * (18 * on(t, PHD, 2028.4) + 14 * on(t, 2028.4))
     };
-    var target = trend(t) + s * (t < 2024.6 ? 14 : 12), used = 0;   // summers run heavier
+    var extra = t < 2024.6 ? 14 : 12 * (1 - phd) + 4 * phd;          // summers run heavier
+    var target = trend(t) + s * extra, used = 0;
     ["software", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
     l.research = Math.max(2, target - used);                         // research takes up the rest
     l.coursework += ramp(t, 2025.4, 2026.3, 9);                      // building toward the capstone
-    l.methods += peak(t, 2028.3, 44);
-    l.research += ramp(t, 2025.4, 2026.3, 14) +                       // crunch weeks
-      peak(t, 2023.2, 14) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
+    l.methods += peak(t, 2028.3, 28);                                // crunch weeks
+    l.research += ramp(t, 2025.4, 2026.3, 14) +
+      peak(t, 2023.2, 14) + peak(t, 2029.3, 27) + peak(t, 2031.3, 24);
     return l;
   }
   function holiday(t) {   // how far into a holiday week t falls, 0 to 1
@@ -223,7 +230,7 @@
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
       'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
-      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60. Work builds slowly toward the M.I.P. capstone, near 65, and Ph.D. crunch weeks reach about 90. ' +
+      'through the B.S. and rise through the M.I.P. to a 65-hour capstone. The Ph.D. starts near 60, led by teaching, coursework, and methods, and research takes over after comprehensive exams. Crunch weeks reach about 90. ' +
       'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();
