@@ -3,7 +3,7 @@
 A one-page academic site laid out like an R help page: a documentation strip at
 the top, monospace headings, a two-column "arguments" table for structured
 facts, and the Environment list as the contents menu. The masthead figure is an
-R Markdown style chunk: the author's time since his first semester drawn as a load curve, hours per
+R Markdown style chunk (code folded under "see the code!"): the author's time since his first semester drawn as a load curve, hours per
 week stacked by what serves them (coursework, methods, teaching, software, research, and the
 milestone "peakers"). Each band links to its section, so the chart doubles as a
 menu.

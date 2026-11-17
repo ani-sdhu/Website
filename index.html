@@ -38,7 +38,19 @@
     </div>
 
     <figure class="chunk" id="chunk" hidden>
-      <pre class="src" aria-hidden="true"><code>wk   &lt;- seq(2021.6, 2031.5, by = 1/52)                       <span class="cm"># every week since my first semester</span>
+      <nav class="legend" aria-label="Sections in the chart">
+        <a href="#education" data-band="coursework"><span class="sw" aria-hidden="true"></span>coursework</a>
+        <a href="#methods" data-band="methods"><span class="sw" aria-hidden="true"></span>methods</a>
+        <a href="#teaching" data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</a>
+        <a href="#software" data-band="software"><span class="sw" aria-hidden="true"></span>software</a>
+        <a href="#research" data-band="research"><span class="sw" aria-hidden="true"></span>research</a>
+        <a href="#education" data-band="milestones"><span class="sw" aria-hidden="true"></span>milestones</a>
+      </nav>
+      <div class="plot" id="plot"></div>
+      <figcaption>My time since my first semester, drawn the way a grid operator draws load: hours per week, stacked by what serves them. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The Ph.D. adds teaching and more hours overall. Everything in the shaded area is projected. Click a band to go to that section.</figcaption>
+      <details class="code">
+        <summary>see the code!</summary>
+        <pre class="src"><code>wk   &lt;- seq(2021.6, 2031.5, by = 1/52)                       <span class="cm"># every week since my first semester</span>
 term &lt;- 1 - 0.45 * pmax(0, cos(2 * pi * (wk - 0.54)))^4         <span class="cm"># summers run light</span>
 on   &lt;- function(a, b = Inf) plogis(12 * (wk - a)) - plogis(12 * (wk - b))
 peak &lt;- function(at, h, w = 0.08) h * exp(-((wk - at) / w)^2)
@@ -58,18 +70,9 @@ abline(h = seq(20, 80, 20), col = "grey88")
 for (k in ncol(stack):1)
   polygon(c(wk, rev(wk)), c(stack[, k], 0 * wk), border = NA,
           col = palette.colors(9, "Okabe-Ito")[c(9, 6, 4, 3, 2, 7)][k])</code></pre>
-      <nav class="legend" aria-label="Sections in the chart">
-        <a href="#education" data-band="coursework"><span class="sw" aria-hidden="true"></span>coursework</a>
-        <a href="#methods" data-band="methods"><span class="sw" aria-hidden="true"></span>methods</a>
-        <a href="#teaching" data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</a>
-        <a href="#software" data-band="software"><span class="sw" aria-hidden="true"></span>software</a>
-        <a href="#research" data-band="research"><span class="sw" aria-hidden="true"></span>research</a>
-        <a href="#education" data-band="milestones"><span class="sw" aria-hidden="true"></span>milestones</a>
-      </nav>
-      <div class="plot" id="plot"></div>
-      <pre class="src out" aria-hidden="true"><code>round(load[which.min(abs(wk - now)), ])
+        <pre class="src out"><code>round(load[which.min(abs(wk - now)), ])
 <span id="live-out"></span></code></pre>
-      <figcaption>My time since my first semester, drawn the way a grid operator draws load: hours per week, stacked by what serves them. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The Ph.D. adds teaching and more hours overall. Everything in the shaded area is projected. Click a band to go to that section.</figcaption>
+      </details>
     </figure>
   </header>
 
