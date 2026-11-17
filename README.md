@@ -2,7 +2,7 @@
 
 A one-page academic site laid out like an R help page: a documentation strip at
 the top, monospace headings, a two-column "arguments" table for structured
-facts, and the Environment list as the contents menu. The masthead figure is an
+facts, and a navigation bar across the top. The masthead figure is an
 R Markdown style chunk (code folded under "see the code!"): the author's time since his first semester drawn as a load curve, hours per
 week stacked by what serves them (coursework, methods, teaching, software, research, and the
 milestone "peakers"). Each band links to its section, so the chart doubles as a
@@ -25,8 +25,7 @@ page reads fine with JavaScript turned off.
 
 Open `index.html` and change the text. Each section is a `<section>` with an
 `id`. If you add or remove a section, also update the list inside
-`<nav class="env">`. The small numbers in that list are counts of entries; keep
-them in step with the page.
+`<nav class="navbar">` and, if it has a band, the chart legend next to the photo.
 
 The curve is the `load()` function near the top of the figure code in
 `assets/js/site.js`, with `t` in decimal years. The same function is printed as
@@ -49,6 +48,6 @@ Then open http://localhost:8000.
 
 ## The R console
 
-"R console" in the contents menu opens a small console. Each section is an
+"R console" in the navigation bar opens a small console. Each section is an
 object: `research()`, `View(methods)`, `ls()`, `help()`, `theme()`, `clear()`,
 `q()`. It is an extra; nothing on the site depends on it.

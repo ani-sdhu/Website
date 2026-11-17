@@ -1,4 +1,4 @@
-/* site.js: theme switch, contents rail, and the optional R console.
+/* site.js: theme switch, navigation bar, the load chart, and the optional R console.
    The page works without this file; it only adds conveniences. */
 (function () {
   "use strict";
@@ -27,7 +27,6 @@
   var BANDS = ["software", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
   var HREF = { software: "#software", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
   var INK = { software: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
-  var Z = [-1.28, -0.674, 0.674, 1.28], SPREAD = 0.06;                                 // 80% and 50% intervals
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
   function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.04), 2)); }
@@ -77,15 +76,15 @@
   function total(l) { return BANDS.reduce(function (a, b) { return a + l[b]; }, 0); }
 
   // events: row 1 is the top line of labels. s* fields are the phone layout; brief "" hides the label there.
-  var EVENTS = [
-    { at: 2023.2, text: "First conference", row: 3, brief: "" },
-    { at: 2024.6, text: "M.I.P. begins", row: 2, brief: "M.I.P." },
-    { at: 2025.37, text: "B.S. graduation", row: 3, brief: "B.S." },
-    { at: 2026.3, text: "M.I.P. capstone", row: 2, anchor: "end", brief: "" },
-    { at: 2026.6, text: "Ph.D. begins", row: 1, anchor: "end", brief: "Ph.D." },
-    { at: 2028.3, text: "Comprehensive exams", row: 2, brief: "comps" },
-    { at: 2029.3, text: "Prospectus", row: 1, brief: "" },
-    { at: 2031.3, text: "Defense", row: 1, anchor: "end", brief: "defense" }
+  var EVENTS = [   // row 1 is the top line of labels; s* is the narrower layout; tiny: hidden on phones
+    { at: 2023.2, text: "First conference", row: 3, brief: "1st conf.", srow: 3, tiny: true },
+    { at: 2024.6, text: "M.I.P. begins", row: 2, brief: "M.I.P.", srow: 2 },
+    { at: 2025.37, text: "B.S. graduation", row: 3, brief: "B.S.", srow: 3 },
+    { at: 2026.3, text: "M.I.P. capstone", row: 2, anchor: "end", brief: "capstone", srow: 2, sanchor: "end", tiny: true },
+    { at: 2026.6, text: "Ph.D. begins", row: 1, anchor: "end", brief: "Ph.D.", srow: 1, sanchor: "end" },
+    { at: 2028.3, text: "Comprehensive exams", row: 2, brief: "comps", srow: 2 },
+    { at: 2029.3, text: "Prospectus", row: 1, brief: "prospectus", srow: 1, tiny: true },
+    { at: 2031.3, text: "Defense", row: 1, anchor: "end", brief: "defense", srow: 1, sanchor: "end" }
   ];
   var MONTHS = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
   function yearNow() {
@@ -97,11 +96,16 @@
     var y = Math.floor(t), m = Math.floor((t - y) * 12);
     return (m < 5 ? "Spring " : m < 7 ? "Summer " : "Fall ") + y;
   }
+  var measure = document.createElement("canvas").getContext("2d");
+  function textWidth(str, size) {
+    measure.font = "600 " + size + 'px "Source Sans 3", "Helvetica Neue", Arial, sans-serif';
+    return measure.measureText(str).width;
+  }
   var view = null, now = Math.min(Math.max(yearNow(), T0), T1), cursorT = now;
 
   function draw(animate) {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 300 : 370;
-    var m = { l: 56, r: small ? 10 : 34, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
+    var W = Math.max(280, holder.clientWidth), small = W < 620, tiny = W < 420, H = small ? 320 : 370;
+    var m = { l: 56, r: 12, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
     var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
     var Y = function (v) { return base - v / TOP * ph; };
     var f1 = function (n) { return Math.round(n * 10) / 10; };
@@ -126,17 +130,6 @@
     });
     var stackArea = edge(BANDS.length - 1) + back(-1) + "Z";
 
-    // forecast interval around the projected total
-    var fan = function (z1, z2) {
-      var up = "", dn = "";
-      for (var j = 0; j <= N; j++) {
-        if (ts[j] < now - 0.02) continue;
-        var tot = cum[j][topBand], h = Math.max(0, ts[j] - now);
-        up += (up ? "L" : "M") + f1(X(ts[j])) + " " + f1(Y(tot * Math.exp(z2 * SPREAD * Math.sqrt(h))));
-        dn = "L" + f1(X(ts[j])) + " " + f1(Y(tot * Math.exp(z1 * SPREAD * Math.sqrt(h)))) + dn;
-      }
-      return up + dn + "Z";
-    };
     var median = "";
     for (i = 0; i <= N; i++) if (ts[i] >= now - 0.02) median += (median ? "L" : "M") + f1(X(ts[i])) + " " + f1(Y(cum[i][topBand]));
 
@@ -145,14 +138,11 @@
       '<clipPath id="clip-past" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="0" width="' + f1(nx - m.l) + '" height="' + base + '"/></clipPath>' +
       '<clipPath id="clip-ahead" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="0" width="' + pw + '" height="' + base + '"/></clipPath>' +
       '<clipPath id="clip-right"><rect x="' + nx + '" y="0" width="' + f1(m.l + pw - nx) + '" height="' + base + '"/></clipPath>' +
-      '<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path class="hatch" d="M0 0V6"/></pattern>' +
       "</defs>";
 
     o += '<rect class="proj" x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/>';
     [20, 40, 60, 80, 100, 120].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
     o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands +
-         '<path class="hatched" d="' + stackArea + '"/>' +
-         '<path class="fan80" d="' + fan(Z[0], Z[3]) + '"/><path class="fan50" d="' + fan(Z[1], Z[2]) + '"/>' +
          '<path class="median" d="' + median + '"/></g></g>';
     o += '<g clip-path="url(#clip-past)">' + bands + '<path class="demand" d="' + edge(BANDS.length - 1) + '"/></g>';
     o += '<path class="axis" d="M' + m.l + " " + base + "H" + (m.l + pw) + '"/>';
@@ -173,11 +163,6 @@
       x = f1(X(yr));
       o += '<path class="tick" d="M' + x + " " + base + 'v5"/><text x="' + x + '" y="' + (base + 20) + '" text-anchor="middle">' + yr + "</text>";
     }
-    if (!small) {
-      var endT = cum[N][topBand], endH = Math.max(0, T1 - now);
-      o += '<text class="fan-label" x="' + (m.l + pw + 4) + '" y="' + f1(Y(endT * Math.exp(1.28 * SPREAD * Math.sqrt(endH))) + 4) + '">80%</text>';
-      o += '<text class="fan-label" x="' + (m.l + pw + 4) + '" y="' + f1(Y(endT * Math.exp(0.674 * SPREAD * Math.sqrt(endH))) + 4) + '">50%</text>';
-    }
 
     // where observation ends
     o += '<path class="today" d="M' + nx + " " + (m.t - 6) + "V" + base + '"/>';
@@ -187,12 +172,12 @@
 
     // events: a diamond on the top of the stack, a thin leader, and a label on its row
     EVENTS.forEach(function (ev) {
-      var label = small ? ev.brief : ev.text, ahead = ev.at > now;
+      var label = !small ? ev.text : (tiny && ev.tiny ? "" : ev.brief), ahead = ev.at > now;
       var near = Math.max(0, Math.min(N, Math.round((ev.at - T0) / span))), win = cum[near][topBand];
       for (var d = -2; d <= 2; d++) { var jj = Math.max(0, Math.min(N, near + d)); win = Math.max(win, cum[jj][topBand]); }
-      var ex = f1(X(ev.at)), ey = f1(Y(win)), anchor = ev.anchor || "middle";
+      var ex = f1(X(ev.at)), ey = f1(Y(win)), anchor = (small ? ev.sanchor : ev.anchor) || "middle";
       if (label) {
-        var ly = rowY(ev.row), dx = anchor === "end" ? 3 : 0;
+        var ly = rowY(small ? ev.srow : ev.row), dx = anchor === "end" ? 3 : 0;
         o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + (ey - 6) + '"/>';
         o += '<text class="event' + (ahead ? " ev-ahead" : "") + '" x="' + f1(ex + dx) + '" y="' + ly + '" text-anchor="' + anchor + '">' + label + "</text>";
       }
@@ -201,8 +186,9 @@
 
     // direct labels, on the solid side when the band fits there
     var cut = Math.round((nx - m.l) / pw * N);
+    var pxPer = pw / N;
     BANDS.forEach(function (b, k) {
-      var half = Math.ceil((b.length * 6.6 + 10) / 2);
+      var half;
       function corridor(c) {   // highest floor and lowest ceiling across the label's width
         var lo = -Infinity, hi = Infinity;
         for (var j = c - half; j <= c + half; j++) {
@@ -211,19 +197,26 @@
         }
         return { lo: lo, hi: hi, room: (hi - lo) / TOP * ph };
       }
-      function search(from, to) {
+      function search(from, to, need) {
         var best = null, bestR = 0;
-        for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c += 2) {
+        for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c += 1) {
           var r = corridor(c).room;
           if (r > bestR) { bestR = r; best = c; }
         }
-        return bestR >= 14 ? best : null;
+        return bestR >= need ? best : null;
       }
-      var at = search(0, cut - half - 2), past = at !== null;
-      if (!past) at = search(cut + half + 2, N);
+      // try the full size first, then a smaller one, on the solid side before the projected side
+      var sizes = [12, 10.5], at = null, past = false, size = 12;
+      for (var z = 0; z < sizes.length && at === null; z++) {
+        size = sizes[z];
+        half = Math.ceil((textWidth(b, size) + 8) / 2 / pxPer);
+        at = search(0, cut - half - 2, size * 2);
+        past = at !== null;
+        if (!past) at = search(cut + half + 2, N, size * 2);
+      }
       if (at === null) return;
       var cr = corridor(at), mid = (cr.lo + cr.hi) / 2;
-      o += '<text class="blabel" x="' + f1(X(ts[at])) + '" y="' + f1(Y(mid) + 4) + '" text-anchor="middle" style="fill:' +
+      o += '<text class="blabel" x="' + f1(X(ts[at])) + '" y="' + f1(Y(mid) + size / 3) + '" text-anchor="middle" style="font-size:' + size + "px;fill:" +
         (past ? INK[b] : "var(--text)") + ";stroke:" + (past ? "var(--b-" + b + ")" : "var(--proj-bg)") + '">' + b + "</text>";
     });
 
@@ -231,7 +224,7 @@
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
       'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
       'through the B.S. and rise through the M.I.P. to a 65-hour capstone. The Ph.D. starts near 60, led by teaching, coursework, and methods, and research takes over after comprehensive exams. Crunch weeks reach about 90. ' +
-      'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
+      'Everything after ' + monthOf(now) + ' is projected. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();
 
@@ -262,11 +255,6 @@
       return '<tr' + (b === under ? ' class="on"' : "") + '><td><span class="sw ' + b + '"></span>' + b + "</td><td>" + Math.round(l[b]) + "</td></tr>";
     }).join("");
     var tot = Math.round(run), band = "";
-    if (ahead) {
-      var h = Math.max(0, t - now);
-      band = '<div class="tip-pi">80% interval ' + Math.round(run * Math.exp(Z[0] * SPREAD * Math.sqrt(h))) + " to " +
-        Math.round(run * Math.exp(Z[3] * SPREAD * Math.sqrt(h))) + "</div>";
-    }
     var hw = holiday(t) > 0.5 ? '<div class="tip-pi">holiday week, about ' + Math.round(run * 0.2) + " h actual</div>" : "";
     tip.innerHTML = '<div class="tip-h">' + head + "</div><table>" + rows + '</table><div class="tip-t">total<b>' + tot + " h/week</b></div>" + band + hw +
       (under ? '<div class="tip-f">click: ' + under + "</div>" : "");
@@ -329,40 +317,32 @@
     redraw = setTimeout(function () { if (holder.clientWidth !== lastW) { lastW = holder.clientWidth; hide(); draw(false); } }, 120);
   });
 
-  /* ---------- contents rail ---------- */
-  var env = $(".env"), toggle = $("#env-toggle"), now = $("#env-now");
-  var links = $$(".env li a");
+  /* ---------- navigation bar ---------- */
+  var bar = $(".navbar"), links = $$(".navbar ul a");
   var ids = links.map(function (a) { return a.getAttribute("href").slice(1); });
   var held = null, holdTimer = null;
 
-  function setOpen(open) {
-    env.classList.toggle("open", open);
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-  }
-  toggle.addEventListener("click", function () { setOpen(!env.classList.contains("open")); });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && env.classList.contains("open")) { setOpen(false); toggle.focus(); }
-  });
-
   function mark(id) {
     links.forEach(function (a) {
-      if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "location");
-      else a.removeAttribute("aria-current");
+      var on = a.getAttribute("href") === "#" + id;
+      if (on) {
+        a.setAttribute("aria-current", "location");
+        var list = a.closest("ul");
+        if (list.scrollWidth > list.clientWidth) list.scrollLeft = a.offsetLeft - list.clientWidth / 2 + a.offsetWidth / 2;
+      } else a.removeAttribute("aria-current");
     });
-    now.textContent = id;
   }
-  links.forEach(function (a) {
+  links.concat($$(".legend a")).forEach(function (a) {
     a.addEventListener("click", function () {
       held = a.getAttribute("href").slice(1);
       mark(held);
-      setOpen(false);
       clearTimeout(holdTimer);
       holdTimer = setTimeout(function () { held = null; }, 1000);
     });
   });
   function spy() {
     if (held) return;
-    var line = window.innerWidth <= 860 ? 80 : 60, cur = ids[0];
+    var line = bar.offsetHeight + 24, cur = ids[0];
     ids.forEach(function (id) {
       var el = document.getElementById(id);
       if (el && el.getBoundingClientRect().top <= line) cur = id;
