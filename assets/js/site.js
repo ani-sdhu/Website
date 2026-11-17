@@ -23,7 +23,7 @@
      draws load by source. The model matches the R code under "see the code!".
      Each band links to its section of the page. */
   var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
-  var T0 = 2021.66, T1 = 2031.42, TOP = 110, PHD = 2026.6, WEEK = 1 / 52;
+  var T0 = 2021.66, T1 = 2031.42, TOP = 120, PHD = 2026.6, WEEK = 1 / 52;
   var BANDS = ["software", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
   var HREF = { software: "#software", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
   var INK = { software: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
@@ -51,9 +51,9 @@
     var target = trend(t) + s * (t < 2024.6 ? 14 : 12), used = 0;   // summers run heavier
     ["software", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
     l.research = Math.max(2, target - used);                         // research takes up the rest
-    l.coursework += peak(t, 2025.37, 44);                            // crunch weeks
+    l.coursework += peak(t, 2025.37, 31);                            // crunch weeks
     l.methods += peak(t, 2028.3, 44);
-    l.research += peak(t, 2023.2, 14) + peak(t, 2026.3, 48) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
+    l.research += peak(t, 2023.2, 14) + peak(t, 2026.3, 33) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
     return l;
   }
   function holiday(t) {   // how far into a holiday week t falls, 0 to 1
@@ -135,7 +135,7 @@
       "</defs>";
 
     o += '<rect class="proj" x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/>';
-    [20, 40, 60, 80, 100].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
+    [20, 40, 60, 80, 100, 120].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
     o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands +
          '<path class="hatched" d="' + stackArea + '"/>' +
          '<path class="fan80" d="' + fan(Z[0], Z[3]) + '"/><path class="fan50" d="' + fan(Z[1], Z[2]) + '"/>' +
@@ -153,7 +153,7 @@
     }
     o += '<path class="rug" d="' + rug + '"/>';
 
-    [0, 20, 40, 60, 80, 100].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 20, 40, 60, 80, 100, 120].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
     o += '<text class="ytitle" transform="translate(14 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Demand (hours per week)</text>';
     for (var yr = 2022; yr <= 2031; yr += small ? 2 : 1) {
       x = f1(X(yr));
@@ -216,7 +216,7 @@
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
       'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
-      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60, and crunch weeks reach about 90. ' +
+      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60. Crunch weeks reach about 75 before the Ph.D. and about 90 during it. ' +
       'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();

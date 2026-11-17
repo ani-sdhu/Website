@@ -51,7 +51,7 @@
         <div class="tip" id="plot-tip" hidden></div>
       </div>
       <p class="sr-only" id="plot-live" aria-live="polite"></p>
-      <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Terms hold near 40 hours through the B.S., then rise steadily from the M.I.P. to the defense. Summers run 50 to 60, and crunch weeks like the capstone peak near 90. Holiday weeks are adjusted out, the way economists adjust for seasons, and marked as ticks under the axis. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The shaded side is a forecast, with its uncertainty shown as bands. Click a band to go to that section.</figcaption>
+      <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Terms hold near 40 hours through the B.S., then rise steadily from the M.I.P. to the defense. Summers run 50 to 60. Crunch weeks top out near 75 before the Ph.D. and near 90 during it. Holiday weeks are adjusted out, the way economists adjust for seasons, and marked as ticks under the axis. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The shaded side is a forecast, with its uncertainty shown as bands. Click a band to go to that section.</figcaption>
       <details class="code">
         <summary>see the code!</summary>
         <pre class="src"><code>wk   &lt;- seq(2021.66, 2031.42, by = 1/365)                    <span class="cm"># every day since my first semester</span>
@@ -74,9 +74,9 @@ load &lt;- cbind(                                                  <span class="
                                 10 * on(2026.6, 2028.4) + 6 * on(2028.4)),
   teaching   = (1 - s) * 10 * phd)
 load &lt;- cbind(load, research = pmax(2, target - rowSums(load)))  <span class="cm"># research takes up the rest</span>
-load[, "coursework"] &lt;- load[, "coursework"] + peak(2025.37, 44)
+load[, "coursework"] &lt;- load[, "coursework"] + peak(2025.37, 31)
 load[, "methods"]    &lt;- load[, "methods"] + peak(2028.3, 44)
-load[, "research"]   &lt;- load[, "research"] + peak(2023.2, 14) + peak(2026.3, 48) + peak(2029.3, 42) + peak(2031.3, 38)
+load[, "research"]   &lt;- load[, "research"] + peak(2023.2, 14) + peak(2026.3, 33) + peak(2029.3, 42) + peak(2031.3, 38)
 
 total &lt;- rowSums(load)
 h     &lt;- pmax(0, wk - now)
@@ -84,8 +84,8 @@ fan   &lt;- sapply(c(-1.28, -0.674, 0.674, 1.28), function(z) total * exp(z * 0.
 hol   &lt;- c(outer(2021:2031, c(0.505, 0.58, 0.905, 0.995), "+"))  <span class="cm"># July 4, July 31, Thanksgiving, winter break</span>
 
 stack &lt;- t(apply(load, 1, cumsum))
-plot(range(wk), c(0, 110), type = "n", bty = "n", las = 1, xlab = "", ylab = "Demand (hours per week)")
-abline(h = seq(20, 100, 20), col = "grey88")
+plot(range(wk), c(0, 120), type = "n", bty = "n", las = 1, xlab = "", ylab = "Demand (hours per week)")
+abline(h = seq(20, 120, 20), col = "grey88")
 for (k in ncol(stack):1)
   polygon(c(wk, rev(wk)), c(stack[, k], 0 * wk), border = "grey15", lwd = 0.75,
           col = palette.colors(9, "Okabe-Ito")[c(3, 9, 8, 6, 4, 2)][k])
