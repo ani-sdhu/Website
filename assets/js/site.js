@@ -19,53 +19,61 @@
   $$("[data-theme-toggle]").forEach(function (b) { b.addEventListener("click", flipTheme); });
 
   /* ---------- the figure: my time as a load curve ----------
-     Hours per week, stacked by what serves them, like a grid operator's
-     dispatch stack. The functions below match the R code printed above
-     the plot. Each band links to its section of the page. */
-  var chunk = $("#chunk"), holder = $("#plot");
-  var T0 = 2021.6, T1 = 2031.5, TOP = 90;
-  var BANDS = ["coursework", "methods", "teaching", "software", "research", "milestones"];
-  var HREF = { coursework: "#education", methods: "#methods", teaching: "#teaching", software: "#software", research: "#research", milestones: "#education" };
+     Hours per week, stacked by what serves them, the way a grid operator
+     draws load by source. The model matches the R code under "see the code!".
+     Each band links to its section of the page. */
+  var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
+  var T0 = 2021.6, T1 = 2031.42, TOP = 90, PHD = 2026.6, WEEK = 1 / 52;
+  var BANDS = ["software", "coursework", "methods", "teaching", "research"];          // bottom of the stack first
+  var HREF = { software: "#software", coursework: "#education", methods: "#methods", teaching: "#teaching", research: "#research" };
+  var INK = { software: "#111", coursework: "#111", methods: "#fff", teaching: "#111", research: "#111" };
+  var Z = [-1.28, -0.674, 0.674, 1.28], SPREAD = 0.08;                                 // 80% and 50% intervals
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
-  function term(t) { return 1 - 0.45 * Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 4); }
-  function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.08), 2)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
+  function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.08), 2)); }
+  function summer(t) { return Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 4); }
   function load(t) {
-    var k = term(t);
+    var s = summer(t), phd = on(t, PHD);
     return {
-      coursework: k * (22 * on(t, 2021.6, 2024.6) + 18 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)),
-      methods: k * (2 * on(t, 2021.6, 2024.6) + 7 * on(t, 2024.6, 2025.4) + 10 * on(t, 2025.4, 2026.6) +
-        16 * on(t, 2026.6, 2028.4) + 6 * on(t, 2028.4)),
-      teaching: k * 15 * on(t, 2026.6),
       software: 4 * on(t, 2025.6),
-      research: k * (2 * on(t, 2021.6, 2024.6) + 12 * on(t, 2024.6, 2025.4) + 18 * on(t, 2025.4, 2026.6) +
-        on(t, 2026.6) * (10 + 26 * plogis(2.5 * (t - 2028.6)))),
-      milestones: peak(t, 2023.2, 5) + peak(t, 2025.37, 8) + peak(t, 2026.3, 12) +
-        peak(t, 2028.3, 18) + peak(t, 2029.3, 12) + peak(t, 2031.3, 20, 0.1)
+      coursework: (1 - 0.7 * s) * (30 * on(t, 2021.6, 2024.6) + 24 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)) +
+        peak(t, 2025.37, 6),
+      methods: (1 - 0.45 * s) * (2 * on(t, 2021.6, 2024.6) + 7 * on(t, 2024.6, 2025.4) + 10 * on(t, 2025.4, PHD) +
+        16 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)) + peak(t, 2028.3, 12),
+      teaching: (1 - 0.7 * s) * 15 * phd,
+      research: (1 - 0.45 * s + 0.8 * s * phd) * (2 * on(t, 2021.6, 2024.6) + 12 * on(t, 2024.6, 2025.4) +
+        18 * on(t, 2025.4, PHD) + phd * (10 + 22 * plogis(2.5 * (t - 2028.6)))) +
+        peak(t, 2023.2, 4) + peak(t, 2026.3, 10) + peak(t, 2029.3, 8) + peak(t, 2031.3, 12, 0.1)
     };
   }
-  // row: 1 is the top line of labels, 3 the lowest. brief: the label on phones.
+  function total(l) { return BANDS.reduce(function (a, b) { return a + l[b]; }, 0); }
+
+  // events: row 1 is the top line of labels. s* fields are the phone layout; brief "" hides the label there.
   var EVENTS = [
-    { at: 2023.2, text: "First conference", brief: "1st conf.", row: 3, anchor: "middle" },
-    { at: 2024.6, text: "M.I.P. begins", brief: "M.I.P.", row: 3, anchor: "middle" },
-    { at: 2025.37, text: "B.S. graduation", brief: "B.S.", row: 2, anchor: "middle" },
-    { at: 2026.3, text: "M.I.P. capstone", brief: "capstone", row: 1, anchor: "end" },
-    { at: 2026.6, text: "Ph.D. begins", brief: "Ph.D.", row: 2, anchor: "start" }
+    { at: 2023.2, text: "First conference", row: 3, brief: "" },
+    { at: 2024.6, text: "M.I.P. begins", row: 2, brief: "M.I.P." },
+    { at: 2025.37, text: "B.S. graduation", row: 3, brief: "B.S." },
+    { at: 2026.3, text: "M.I.P. capstone", row: 2, anchor: "end", brief: "" },
+    { at: 2026.6, text: "Ph.D. begins", row: 1, anchor: "end", brief: "Ph.D." },
+    { at: 2028.3, text: "Comprehensive exams", row: 2, brief: "comps" },
+    { at: 2029.3, text: "Prospectus", row: 1, brief: "" },
+    { at: 2031.3, text: "Defense", row: 1, anchor: "end", brief: "defense" }
   ];
+  var MONTHS = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
   function yearNow() {
     var d = new Date(), y = d.getUTCFullYear(), s0 = Date.UTC(y, 0, 1);
     return y + (d - s0) / (Date.UTC(y + 1, 0, 1) - s0);
   }
+  function monthOf(t) { var y = Math.floor(t); return MONTHS[Math.min(11, Math.floor((t - y) * 12))] + " " + y; }
   function season(t) {
     var y = Math.floor(t), m = Math.floor((t - y) * 12);
     return (m < 5 ? "Spring " : m < 7 ? "Summer " : "Fall ") + y;
   }
-  var view = null;
+  var view = null, now = Math.min(Math.max(yearNow(), T0), T1), cursorT = now;
 
   function draw(animate) {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 280 : 340;
-    var m = { l: 40, r: 10, t: 24, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
-    var now = Math.min(Math.max(yearNow(), T0), T1);
+    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 290 : 350;
+    var m = { l: 56, r: small ? 10 : 34, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
     var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
     var Y = function (v) { return base - v / TOP * ph; };
     var f1 = function (n) { return Math.round(n * 10) / 10; };
@@ -75,72 +83,85 @@
       BANDS.forEach(function (b) { run += l[b]; row[b] = run; });
       ts.push(t); cum.push(row);
     }
-    // one polygon per band: the top edge of this band, then back along the top of the one below
-    function bandPath(k) {
-      var top = "", bot = "";
-      for (var j = 0; j <= N; j++) top += (j ? "L" : "M") + f1(X(ts[j])) + " " + f1(Y(cum[j][BANDS[k]]));
-      for (j = N; j >= 0; j--) bot += "L" + f1(X(ts[j])) + " " + f1(Y(k ? cum[j][BANDS[k - 1]] : 0));
-      return top + bot + "Z";
-    }
+    var topBand = BANDS[BANDS.length - 1];
+    function edge(k) { var d = ""; for (var j = 0; j <= N; j++) d += (j ? "L" : "M") + f1(X(ts[j])) + " " + f1(Y(cum[j][BANDS[k]])); return d; }
+    function back(k) { var d = ""; for (var j = N; j >= 0; j--) d += "L" + f1(X(ts[j])) + " " + f1(Y(k >= 0 ? cum[j][BANDS[k]] : 0)); return d; }
     var bands = "";
     BANDS.forEach(function (b, k) {
-      bands += '<a href="' + HREF[b] + '" tabindex="-1" data-band="' + b + '"><path class="band ' + b + '" d="' + bandPath(k) + '"/></a>';
+      bands += '<a href="' + HREF[b] + '" tabindex="-1" data-band="' + b + '"><path class="band ' + b + '" d="' + edge(k) + back(k - 1) + 'Z"/></a>';
     });
-    var total = "";
-    for (i = 0; i <= N; i++) total += (i ? "L" : "M") + f1(X(ts[i])) + " " + f1(Y(cum[i].milestones));
+    var stackArea = edge(BANDS.length - 1) + back(-1) + "Z";
+
+    // forecast interval around the projected total
+    var fan = function (z1, z2) {
+      var up = "", dn = "";
+      for (var j = 0; j <= N; j++) {
+        if (ts[j] < now - 0.02) continue;
+        var tot = cum[j][topBand], h = Math.max(0, ts[j] - now);
+        up += (up ? "L" : "M") + f1(X(ts[j])) + " " + f1(Y(tot * Math.exp(z2 * SPREAD * Math.sqrt(h))));
+        dn = "L" + f1(X(ts[j])) + " " + f1(Y(tot * Math.exp(z1 * SPREAD * Math.sqrt(h)))) + dn;
+      }
+      return up + dn + "Z";
+    };
+    var median = "";
+    for (i = 0; i <= N; i++) if (ts[i] >= now - 0.02) median += (median ? "L" : "M") + f1(X(ts[i])) + " " + f1(Y(cum[i][topBand]));
 
     var nx = f1(X(now)), o = "", x, y;
-    o += '<defs><clipPath id="clip-past" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + f1(nx - m.l) + '" height="' + ph + '"/></clipPath>' +
-         '<clipPath id="clip-ahead" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/></clipPath>' +
-         '<clipPath id="clip-right"><rect x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/></clipPath></defs>';
+    o += '<defs>' +
+      '<clipPath id="clip-past" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="0" width="' + f1(nx - m.l) + '" height="' + base + '"/></clipPath>' +
+      '<clipPath id="clip-ahead" class="' + (animate ? "reveal" : "") + '"><rect x="' + m.l + '" y="0" width="' + pw + '" height="' + base + '"/></clipPath>' +
+      '<clipPath id="clip-right"><rect x="' + nx + '" y="0" width="' + f1(m.l + pw - nx) + '" height="' + base + '"/></clipPath>' +
+      '<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path class="hatch" d="M0 0V6"/></pattern>' +
+      "</defs>";
 
-    // projected region first, then gridlines, then the stack on top
     o += '<rect class="proj" x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/>';
-    [20, 40, 60, 80].forEach(function (v) {
-      y = f1(Y(v));
-      o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>';
-    });
-    o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands + '<path class="total ahead" d="' + total + '"/></g></g>';
-    o += '<g clip-path="url(#clip-past)">' + bands + '<path class="total" d="' + total + '"/></g>';
+    [20, 40, 60, 80].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
+    o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands +
+         '<path class="hatched" d="' + stackArea + '"/>' +
+         '<path class="fan80" d="' + fan(Z[0], Z[3]) + '"/><path class="fan50" d="' + fan(Z[1], Z[2]) + '"/>' +
+         '<path class="median" d="' + median + '"/></g></g>';
+    o += '<g clip-path="url(#clip-past)">' + bands + '<path class="demand" d="' + edge(BANDS.length - 1) + '"/></g>';
     o += '<path class="axis" d="M' + m.l + " " + base + "H" + (m.l + pw) + '"/>';
 
-    [0, 20, 40, 60, 80].forEach(function (v) {
-      o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>";
-    });
-    o += '<text class="units" x="' + (m.l - 8) + '" y="' + (m.t - 8) + '">hours per week</text>';
+    [0, 20, 40, 60, 80].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    o += '<text class="ytitle" transform="translate(14 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Demand (hours per week)</text>';
     for (var yr = 2022; yr <= 2031; yr += small ? 2 : 1) {
       x = f1(X(yr));
       o += '<path class="tick" d="M' + x + " " + base + 'v5"/><text x="' + x + '" y="' + (base + 20) + '" text-anchor="middle">' + yr + "</text>";
     }
+    if (!small) {
+      var endT = cum[N][topBand], endH = Math.max(0, T1 - now);
+      o += '<text class="fan-label" x="' + (m.l + pw + 4) + '" y="' + f1(Y(endT * Math.exp(1.28 * SPREAD * Math.sqrt(endH))) + 4) + '">80%</text>';
+      o += '<text class="fan-label" x="' + (m.l + pw + 4) + '" y="' + f1(Y(endT * Math.exp(0.674 * SPREAD * Math.sqrt(endH))) + 4) + '">50%</text>';
+    }
 
-    // the projection boundary, labelled once, the way EIA marks a forecast
-    o += '<path class="today" d="M' + nx + " " + m.t + "V" + base + '"/>';
-    o += '<text class="proj-text" x="' + (nx + 6) + '" y="' + (m.t + 14) + '">projected</text>';
-
-    // events: a label on its row, and a thin leader down to the top of the stack
+    // where observation ends
+    o += '<path class="today" d="M' + nx + " " + (m.t - 6) + "V" + base + '"/>';
+    o += '<text class="today-text" x="' + nx + '" y="' + (m.t - 10) + '" text-anchor="middle">' + monthOf(now) + "</text>";
     var rowY = function (r) { return m.t + 14 + (r - 1) * 16; };
+    o += '<text class="proj-text" x="' + (nx + 6) + '" y="' + rowY(1) + '">projected →</text>';
+
+    // events: a diamond on the top of the stack, a thin leader, and a label on its row
     EVENTS.forEach(function (ev) {
-      var l = load(ev.at), sum = 0;
-      BANDS.forEach(function (b) { sum += l[b]; });
-      var ex = f1(X(ev.at)), ly = rowY(ev.row), dx = ev.anchor === "end" ? 3 : ev.anchor === "start" ? -3 : 0;
-      o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + f1(Y(sum) - 2) + '"/>';
-      o += '<text class="event" x="' + f1(ex + dx) + '" y="' + ly + '" text-anchor="' + ev.anchor + '">' + (small ? ev.brief : ev.text) + "</text>";
+      var label = small ? ev.brief : ev.text, ahead = ev.at > now;
+      var l = load(ev.at), ex = f1(X(ev.at)), ey = f1(Y(total(l))), anchor = ev.anchor || "middle";
+      if (label) {
+        var ly = rowY(ev.row), dx = anchor === "end" ? 3 : 0;
+        o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + (ey - 6) + '"/>';
+        o += '<text class="event' + (ahead ? " ev-ahead" : "") + '" x="' + f1(ex + dx) + '" y="' + ly + '" text-anchor="' + anchor + '">' + label + "</text>";
+      }
+      o += '<path class="diamond' + (ahead ? " ev-ahead" : "") + '" d="M' + ex + " " + (ey - 5) + "l4.5 5-4.5 5-4.5-5z" + '"/>';
     });
-    // direct labels: each band's name sits where that band is thickest across the label's width.
-    // Prefer the observed side, where the fill is solid; fall back to the projected side.
-    var INK = { coursework: "#111", methods: "#fff", teaching: "#111", software: "#111", research: "#111" };
+
+    // direct labels, on the solid side when the band fits there
     var cut = Math.round((nx - m.l) / pw * N);
     BANDS.forEach(function (b, k) {
-      if (b === "milestones") return;
       var half = Math.ceil((b.length * 6.6 + 10) / 4);
       function search(from, to) {
         var best = null, bestT = 0;
         for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c++) {
           var thin = Infinity;
-          for (var j = c - half; j <= c + half; j++) {
-            var lo = k ? cum[j][BANDS[k - 1]] : 0;
-            thin = Math.min(thin, (cum[j][b] - lo) / TOP * ph);
-          }
+          for (var j = c - half; j <= c + half; j++) thin = Math.min(thin, (cum[j][b] - (k ? cum[j][BANDS[k - 1]] : 0)) / TOP * ph);
           if (thin > bestT) { bestT = thin; best = c; }
         }
         return bestT >= 13 ? best : null;
@@ -148,20 +169,24 @@
       var at = search(0, cut - half - 2), past = at !== null;
       if (!past) at = search(cut + half + 2, N);
       if (at === null) return;
-      var lo = k ? cum[at][BANDS[k - 1]] : 0, mid = (lo + cum[at][b]) / 2;
+      var mid = ((k ? cum[at][BANDS[k - 1]] : 0) + cum[at][b]) / 2;
       o += '<text class="blabel" x="' + f1(X(ts[at])) + '" y="' + f1(Y(mid) + 4) + '" text-anchor="middle" style="fill:' +
         (past ? INK[b] : "var(--text)") + '">' + b + "</text>";
     });
-    o += '<path class="cross" id="cross" d="" visibility="hidden"/><text class="readout" id="readout" visibility="hidden"></text>';
 
-    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" aria-hidden="true">' + o + "</svg>";
-    view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, small: small, svg: holder.querySelector("svg") };
+    o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
+    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
+      'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them. Coursework carries the B.S. at about 30 hours. ' +
+      'The M.I.P., from fall 2024, shifts the load to research. The Ph.D., from fall 2026, adds teaching, and the total rises to the mid 50s. ' +
+      'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
+    view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
+    wireSvg();
 
-    var l0 = load(now), names = BANDS, vals = names.map(function (b) { return String(Math.round(l0[b])); });
-    var w = names.map(function (n, i) { return Math.max(n.length, vals[i].length); });
+    var l0 = load(now), order = BANDS.slice().reverse(), vals = order.map(function (b) { return String(Math.round(l0[b])); });
+    var w = order.map(function (n, j) { return Math.max(n.length, vals[j].length); });
     var padL = function (t, n) { return new Array(n - t.length + 1).join(" ") + t; };
-    $("#live-out").textContent = "## " + names.map(function (n, i) { return padL(n, w[i]); }).join(" ") + "\n## " +
-      vals.map(function (v, i) { return padL(v, w[i]); }).join(" ");
+    $("#live-out").textContent = "## " + order.map(function (n, j) { return padL(n, w[j]); }).join(" ") + "\n## " +
+      vals.map(function (v, j) { return padL(v, w[j]); }).join(" ");
   }
 
   // highlight a band everywhere it appears (plot and legend)
@@ -171,26 +196,62 @@
     $$(".legend a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-band") === band); });
   }
 
-  // crosshair and readout: season, total hours, and the band under the pointer
-  function track(e) {
-    var v = view, r = v.svg.getBoundingClientRect(), sx = v.W / r.width;
-    var px = (e.clientX - r.left) * sx, py = (e.clientY - r.top) * sx;
-    var cross = $("#cross"), out = $("#readout");
-    if (px < v.m.l || px > v.m.l + v.pw || py < v.m.t || py > v.m.t + v.ph) {
-      cross.setAttribute("visibility", "hidden"); out.setAttribute("visibility", "hidden"); return;
-    }
-    var t = T0 + (px - v.m.l) / v.pw * (T1 - T0), l = load(t), run = 0, under = null;
-    var val = (v.m.t + v.ph - py) / v.ph * TOP;
-    BANDS.forEach(function (b) { if (!under && val <= run + l[b]) under = b; run += l[b]; });
-    cross.setAttribute("d", "M" + px + " " + v.m.t + "V" + (v.m.t + v.ph));
+  // crosshair, edge dots, and the tooltip for week t
+  function readout(t, under, announce) {
+    var v = view, l = load(t), x = v.X(t), run = 0, dots = "";
+    BANDS.forEach(function (b) { run += l[b]; dots += '<circle class="dot ' + b + '" cx="' + x.toFixed(1) + '" cy="' + v.Y(run).toFixed(1) + '" r="3"/>'; });
+    var cross = $("#cross");
+    cross.setAttribute("d", "M" + x.toFixed(1) + " " + v.m.t + "V" + (v.m.t + v.ph));
     cross.setAttribute("visibility", "visible");
-    var text = season(t) + ": " + Math.round(run) + " h/week" + (under ? ", " + Math.round(l[under]) + " " + under : "");
-    var left = px > v.m.l + v.pw * 0.55;
-    out.setAttribute("x", left ? px - 8 : px + 8);
-    out.setAttribute("y", v.m.t + v.ph - 10);
-    out.setAttribute("text-anchor", left ? "end" : "start");
-    out.textContent = text;
-    out.setAttribute("visibility", "visible");
+    $("#dots").innerHTML = dots;
+    var ahead = t > now, head = season(t) + (ahead ? ' <em>projected</em>' : "");
+    var rows = BANDS.slice().reverse().map(function (b) {
+      return '<tr' + (b === under ? ' class="on"' : "") + '><td><span class="sw ' + b + '"></span>' + b + "</td><td>" + Math.round(l[b]) + "</td></tr>";
+    }).join("");
+    var tot = Math.round(run), band = "";
+    if (ahead) {
+      var h = Math.max(0, t - now);
+      band = '<div class="tip-pi">80% interval ' + Math.round(run * Math.exp(Z[0] * SPREAD * Math.sqrt(h))) + " to " +
+        Math.round(run * Math.exp(Z[3] * SPREAD * Math.sqrt(h))) + "</div>";
+    }
+    tip.innerHTML = '<div class="tip-h">' + head + "</div><table>" + rows + '</table><div class="tip-t">total<b>' + tot + " h/week</b></div>" + band +
+      (under ? '<div class="tip-f">click: ' + under + "</div>" : "");
+    var r = v.svg.getBoundingClientRect(), k = r.width / v.W, left = x > v.m.l + v.pw * 0.55;
+    tip.hidden = false;
+    var px = x * k, tw = tip.offsetWidth;
+    tip.style.left = Math.round(left ? px - tw - 12 : px + 12) + "px";
+    tip.style.top = Math.round((v.m.t + 4) * k) + "px";
+    if (announce) said.textContent = season(t) + (ahead ? ", projected" : "") + ": " + tot + " hours per week. " +
+      BANDS.slice().reverse().map(function (b) { return b + " " + Math.round(l[b]); }).join(", ") + ".";
+  }
+  function hide() {
+    if (!view) return;
+    $("#cross").setAttribute("visibility", "hidden");
+    $("#dots").innerHTML = "";
+    tip.hidden = true;
+  }
+  function snap(t) { return T0 + Math.round((t - T0) / WEEK) * WEEK; }
+
+  function wireSvg() {
+    var svg = view.svg;
+    svg.addEventListener("focus", function () { readout(cursorT, null, true); });
+    svg.addEventListener("blur", hide);
+    svg.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        cursorT = Math.min(T1, Math.max(T0, cursorT + (e.key === "ArrowLeft" ? -1 : 1) / 12));
+        readout(cursorT, null, true);
+        e.preventDefault();
+      } else if (e.key === "Escape") { hide(); }
+    });
+  }
+
+  function track(e) {
+    var v = view, r = v.svg.getBoundingClientRect(), k = v.W / r.width;
+    var px = (e.clientX - r.left) * k, py = (e.clientY - r.top) * k;
+    if (px < v.m.l || px > v.m.l + v.pw || py < v.m.t || py > v.m.t + v.ph) { hide(); return; }
+    var t = snap(T0 + (px - v.m.l) / v.pw * (T1 - T0)), l = load(t), val = (v.m.t + v.ph - py) / v.ph * TOP, run = 0, under = null;
+    BANDS.forEach(function (b) { if (!under && val <= run + l[b]) under = b; run += l[b]; });
+    readout(t, under, false);
   }
 
   chunk.hidden = false;
@@ -200,11 +261,7 @@
     focus(a ? a.getAttribute("data-band") : null);
   });
   holder.addEventListener("pointermove", track);
-  holder.addEventListener("pointerleave", function () {
-    focus(null);
-    $("#cross").setAttribute("visibility", "hidden");
-    $("#readout").setAttribute("visibility", "hidden");
-  });
+  holder.addEventListener("pointerleave", function () { focus(null); hide(); });
   $$(".legend a").forEach(function (a) {
     var b = a.getAttribute("data-band");
     a.addEventListener("pointerenter", function () { focus(b); });
@@ -215,7 +272,7 @@
   var redraw = null, lastW = holder.clientWidth;
   window.addEventListener("resize", function () {
     clearTimeout(redraw);
-    redraw = setTimeout(function () { if (holder.clientWidth !== lastW) { lastW = holder.clientWidth; draw(false); } }, 120);
+    redraw = setTimeout(function () { if (holder.clientWidth !== lastW) { lastW = holder.clientWidth; hide(); draw(false); } }, 120);
   });
 
   /* ---------- contents rail ---------- */
