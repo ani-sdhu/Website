@@ -95,16 +95,21 @@ h1 {
 .plot .frame, .plot .tick { fill: none; stroke: var(--ink); stroke-width: 1; }
 /* Okabe-Ito, the colour-blind-safe palette built into R (palette.colors) */
 .plot, .legend {
-  --b-methods: #0072b2; --b-teaching: #009e73; --b-software: #56b4e9;
+  --b-coursework: #999999; --b-methods: #0072b2; --b-teaching: #009e73; --b-software: #56b4e9;
   --b-research: #e69f00; --b-milestones: #d55e00;
 }
 .plot .band { stroke: var(--bg); stroke-width: 1; cursor: pointer; transition: opacity .15s; }
+.plot .band.coursework { fill: var(--b-coursework); }
 .plot .band.methods { fill: var(--b-methods); }
 .plot .band.teaching { fill: var(--b-teaching); }
 .plot .band.software { fill: var(--b-software); }
 .plot .band.research { fill: var(--b-research); }
 .plot .band.milestones { fill: var(--b-milestones); }
-.plot .ahead .band { opacity: .42; }
+.plot .ahead .band { opacity: .38; }
+.plot .proj { fill: var(--tint); }
+.plot .phase { fill: none; stroke: var(--ink); stroke-width: 1; }
+.plot .split { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1 3; opacity: .55; }
+.plot .tag { font-weight: 700; }
 .plot.focus .band { opacity: .25; }
 .plot.focus .ahead .band { opacity: .14; }
 .plot.focus .band.on { opacity: 1; }
@@ -127,6 +132,7 @@ h1 {
 .legend a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--text); text-decoration: none; }
 .legend a:hover, .legend a.on { text-decoration: underline; text-underline-offset: 3px; }
 .legend .sw { width: 12px; height: 12px; display: inline-block; }
+.legend [data-band="coursework"] .sw { background: var(--b-coursework); }
 .legend [data-band="methods"] .sw { background: var(--b-methods); }
 .legend [data-band="teaching"] .sw { background: var(--b-teaching); }
 .legend [data-band="software"] .sw { background: var(--b-software); }
