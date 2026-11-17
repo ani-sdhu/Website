@@ -25,7 +25,7 @@
   var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
   var T0 = 2021.66, T1 = 2031.42, TOP = 120, PHD = 2026.6, WEEK = 1 / 52;
   var BANDS = ["projects", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
-  var HREF = { projects: "#projects", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
+  var HREF = { projects: "#projects", coursework: "#education", industry: "#industry", methods: "#methods", teaching: "#teaching", research: "#research" };
   var INK = { projects: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
