@@ -23,7 +23,7 @@
      draws load by source. The model matches the R code under "see the code!".
      Each band links to its section of the page. */
   var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
-  var T0 = 2021.6, T1 = 2031.42, TOP = 110, PHD = 2026.6, WEEK = 1 / 52;
+  var T0 = 2021.66, T1 = 2031.42, TOP = 110, PHD = 2026.6, WEEK = 1 / 52;
   var BANDS = ["software", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
   var HREF = { software: "#software", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
   var INK = { software: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
@@ -35,26 +35,31 @@
   function summer(t) { var f = frac(t); return plogis(60 * (f - 0.38)) - plogis(60 * (f - 0.62)); }
   // a week off: distance around the calendar to a fixed time of year
   function gap(t, at, w) { var d = Math.abs(frac(t) - at); d = Math.min(d, 1 - d); return Math.exp(-Math.pow(d / w, 2)); }
-  function off(t) {   // Thanksgiving, winter break, the week of July 4, the week of July 31
-    return 1 - 0.8 * Math.max(gap(t, 0.905, 0.012), gap(t, 0.995, 0.022), gap(t, 0.505, 0.012), gap(t, 0.58, 0.012));
-  }
-  function load(t, steady) {   // steady: leave out the holiday weeks (used only to place labels)
-    var s = summer(t), phd = on(t, PHD), grow = plogis(2.5 * (t - 2028.6)), k = steady ? 1 : off(t);
+  // Holiday-adjusted, like seasonally adjusted data: holiday weeks are marked under the axis, not dipped.
+  // Term-time load is flat through the B.S., then rises steadily from the M.I.P. to the defense.
+  function trend(t) { return 38 + 8 * on(t, 2023.1, 2023.95) + 14 * Math.min(1, Math.max(0, (t - 2024.6) / 6.7)); }
+  function load(t) {
+    var s = summer(t), phd = on(t, PHD);
     var l = {
       software: 4 * on(t, 2025.6),
-      coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)) +
-        peak(t, 2025.37, 48),
+      coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)),
       industry: 2 + 8 * on(t, 2023.1, 2023.95) + s * (46 * on(t, 2021.6, 2024.6) + 20 * on(t, 2024.6, PHD)),
       methods: (1 - 0.5 * s) * (3 * on(t, 2021.6, 2024.6) + 8 * on(t, 2024.6, 2025.4) + 12 * on(t, 2025.4, PHD) +
-        10 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)) + peak(t, 2028.3, 48),
-      teaching: (1 - s) * 10 * phd,
-      research: 3 * on(t, 2021.6, 2024.6) + 10 * on(t, 2024.6, 2025.4) + 16 * on(t, 2025.4, PHD) + phd * (4 + 14 * grow) +
-        s * (8 * on(t, 2024.6, PHD) + phd * (40 - 14 * grow)) +
-        peak(t, 2023.2, 46) + peak(t, 2026.3, 50) + peak(t, 2029.3, 50) + peak(t, 2031.3, 50)
+        10 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)),
+      teaching: (1 - s) * 10 * phd
     };
-    BANDS.forEach(function (b) { l[b] *= k; });
+    var target = trend(t) + s * (t < 2024.6 ? 14 : 12), used = 0;   // summers run heavier
+    ["software", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
+    l.research = Math.max(2, target - used);                         // research takes up the rest
+    l.coursework += peak(t, 2025.37, 44);                            // crunch weeks
+    l.methods += peak(t, 2028.3, 44);
+    l.research += peak(t, 2023.2, 14) + peak(t, 2026.3, 48) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
     return l;
   }
+  function holiday(t) {   // how far into a holiday week t falls, 0 to 1
+    return Math.max(gap(t, 0.905, 0.012), gap(t, 0.995, 0.022), gap(t, 0.505, 0.012), gap(t, 0.58, 0.012));
+  }
+  var HOLIDAYS = [[0.505, 0.012], [0.58, 0.012], [0.905, 0.012], [0.995, 0.022]];   // July 4, July 31, Thanksgiving, winter break
   function total(l) { return BANDS.reduce(function (a, b) { return a + l[b]; }, 0); }
 
   // events: row 1 is the top line of labels. s* fields are the phone layout; brief "" hides the label there.
@@ -87,11 +92,9 @@
     var Y = function (v) { return base - v / TOP * ph; };
     var f1 = function (n) { return Math.round(n * 10) / 10; };
     var N = Math.round(pw), ts = [], cum = [];
-    var span = (T1 - T0) / N, steady = [];
+    var span = (T1 - T0) / N;
     for (var i = 0; i <= N; i++) {
-      var t = T0 + span * i, run = 0, row = {}, avg = {}, ls = load(t, true), r2 = 0, row2 = {};
-      BANDS.forEach(function (b) { r2 += ls[b]; row2[b] = r2; });
-      steady.push(row2);
+      var t = T0 + span * i, run = 0, row = {}, avg = {};
       BANDS.forEach(function (b) { avg[b] = 0; });
       for (var q = 0; q < 4; q++) {
         var lq = load(t + span * ((q + 0.5) / 4 - 0.5));
@@ -139,6 +142,16 @@
          '<path class="median" d="' + median + '"/></g></g>';
     o += '<g clip-path="url(#clip-past)">' + bands + '<path class="demand" d="' + edge(BANDS.length - 1) + '"/></g>';
     o += '<path class="axis" d="M' + m.l + " " + base + "H" + (m.l + pw) + '"/>';
+    var rug = "";
+    for (var hy = Math.floor(T0); hy <= Math.ceil(T1); hy++) {
+      HOLIDAYS.forEach(function (hd) {
+        var c = hy + hd[0], half = hd[1] * 1.6;
+        if (c - half < T0 || c + half > T1) return;
+        var a = X(c - half), b2 = X(c + half);
+        rug += "M" + f1(a) + " " + (base + 2) + "H" + f1(Math.max(b2, a + 1.5)) + "v3H" + f1(a) + "z";
+      });
+    }
+    o += '<path class="rug" d="' + rug + '"/>';
 
     [0, 20, 40, 60, 80, 100].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
     o += '<text class="ytitle" transform="translate(14 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Demand (hours per week)</text>';
@@ -179,8 +192,8 @@
       function corridor(c) {   // highest floor and lowest ceiling across the label's width
         var lo = -Infinity, hi = Infinity;
         for (var j = c - half; j <= c + half; j++) {
-          lo = Math.max(lo, k ? steady[j][BANDS[k - 1]] : 0);
-          hi = Math.min(hi, steady[j][b]);
+          lo = Math.max(lo, k ? cum[j][BANDS[k - 1]] : 0);
+          hi = Math.min(hi, cum[j][b]);
         }
         return { lo: lo, hi: hi, room: (hi - lo) / TOP * ph };
       }
@@ -202,8 +215,8 @@
 
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
-      'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them. School terms run about 40 hours, summers 50 to 60, ' +
-      'holiday weeks drop to about 10, and crunch weeks such as the capstone reach about 90. The Ph.D., from fall 2026, adds teaching. ' +
+      'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
+      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60, and crunch weeks reach about 90. ' +
       'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();
@@ -240,7 +253,8 @@
       band = '<div class="tip-pi">80% interval ' + Math.round(run * Math.exp(Z[0] * SPREAD * Math.sqrt(h))) + " to " +
         Math.round(run * Math.exp(Z[3] * SPREAD * Math.sqrt(h))) + "</div>";
     }
-    tip.innerHTML = '<div class="tip-h">' + head + "</div><table>" + rows + '</table><div class="tip-t">total<b>' + tot + " h/week</b></div>" + band +
+    var hw = holiday(t) > 0.5 ? '<div class="tip-pi">holiday week, about ' + Math.round(run * 0.2) + " h actual</div>" : "";
+    tip.innerHTML = '<div class="tip-h">' + head + "</div><table>" + rows + '</table><div class="tip-t">total<b>' + tot + " h/week</b></div>" + band + hw +
       (under ? '<div class="tip-f">click: ' + under + "</div>" : "");
     var r = v.svg.getBoundingClientRect(), k = r.width / v.W, left = x > v.m.l + v.pw * 0.55;
     tip.hidden = false;

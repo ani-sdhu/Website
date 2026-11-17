@@ -104,6 +104,7 @@ h1 {
 .plot .band { stroke: var(--edge); stroke-width: .6; stroke-opacity: .55; stroke-linejoin: round; cursor: pointer; transition: opacity .15s; }
 .plot .demand { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; pointer-events: none; }
 .plot .ytitle { fill: var(--text-2); }
+.plot .rug { fill: var(--text-2); }
 .plot .band.coursework { fill: var(--b-coursework); }
 .plot .band.industry { fill: var(--b-industry); }
 .plot .band.methods { fill: var(--b-methods); }
