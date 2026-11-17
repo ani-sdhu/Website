@@ -93,12 +93,13 @@ h1 {
 .plot svg { display: block; width: 100%; height: auto; overflow: visible; }
 .plot text { font-family: Helvetica, Arial, sans-serif; font-size: 12px; fill: var(--text); }
 .plot .frame, .plot .tick { fill: none; stroke: var(--ink); stroke-width: 1; }
-.plot .line { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
-.plot .line.ahead { stroke-width: 1.25; stroke-dasharray: 1.5 4; stroke-linecap: round; }
-.plot .pole { fill: none; stroke: var(--ink); stroke-width: 1; }
-.plot .pole.ahead { stroke-dasharray: 3 3; }
+.plot .wire { fill: none; stroke: var(--ink); stroke-width: .9; opacity: .75; }
+.plot .wire.ahead { stroke-dasharray: 1.5 3.5; stroke-linecap: round; opacity: 1; }
+.plot .tower { fill: none; stroke: var(--ink); stroke-width: .9; stroke-linejoin: round; }
+.plot .tower.ahead { stroke-dasharray: 2.5 2.5; }
 .plot .charge { fill: none; stroke: var(--accent); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
 .plot .here { fill: var(--accent); }
+.plot .note, .plot .now-text { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 .plot .note { font-style: italic; }
 .plot .now-text { fill: var(--accent); font-weight: 700; }
 .chunk-tools { margin: 6px 0 0; padding-left: 18px; }

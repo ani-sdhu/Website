@@ -4,9 +4,9 @@ A one-page academic site laid out like an R help page: a documentation strip at
 the top, monospace headings, a two-column "arguments" table for structured
 facts, and the Environment list as the contents menu. The masthead figure is an
 R Markdown style chunk: a model of the author's energy over his life, drawn as
-a power line strung across distribution poles. The line is a sum of logistic
-and Gaussian terms, the part after today is dotted, and a pulse travels along
-it from birth to today.
+a power line. Each transmission tower is as tall as the energy in that stretch
+of life, every wire between towers is a catenary, the part after today is
+dotted, and a pulse travels along a wire from birth to today.
 
 It is plain HTML and CSS with a small script. There is no build step, and the
 page reads fine with JavaScript turned off.
@@ -28,10 +28,10 @@ Open `index.html` and change the text. Each section is a `<section>` with an
 `<nav class="env">`. The small numbers in that list are counts of entries; keep
 them in step with the page.
 
-The curve is the function `A(t)` near the top of the figure code in
-`assets/js/site.js`, with `t` in decimal years. The same function is printed as
-R in the code block in `index.html`. If you move a date or change a height,
-change it in both places. The poles and their labels are the `poles` list.
+The towers are the `LIFE` list near the top of the figure code in
+`assets/js/site.js`: `t` is the year, `e` is the height, and `text` is the
+label. The same years and heights are printed as R in the code block in
+`index.html`. If you move a tower, change it in both places.
 
 ## Previewing locally
 
