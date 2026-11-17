@@ -29,7 +29,7 @@
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function term(t) { return 1 - 0.45 * Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 4); }
   function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.08), 2)); }
-  function on(t, a, b) { return plogis(12 * (t - a)) - plogis(12 * (t - (b === undefined ? Infinity : b))); }
+  function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
   function load(t) {
     var k = term(t);
     return {
@@ -125,6 +125,32 @@
       var ex = f1(X(ev.at)), ly = rowY(ev.row), dx = ev.anchor === "end" ? 3 : ev.anchor === "start" ? -3 : 0;
       o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + f1(Y(sum) - 2) + '"/>';
       o += '<text class="event" x="' + f1(ex + dx) + '" y="' + ly + '" text-anchor="' + ev.anchor + '">' + (small ? ev.brief : ev.text) + "</text>";
+    });
+    // direct labels: each band's name sits where that band is thickest across the label's width.
+    // Prefer the observed side, where the fill is solid; fall back to the projected side.
+    var INK = { coursework: "#111", methods: "#fff", teaching: "#111", software: "#111", research: "#111" };
+    var cut = Math.round((nx - m.l) / pw * N);
+    BANDS.forEach(function (b, k) {
+      if (b === "milestones") return;
+      var half = Math.ceil((b.length * 6.6 + 10) / 4);
+      function search(from, to) {
+        var best = null, bestT = 0;
+        for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c++) {
+          var thin = Infinity;
+          for (var j = c - half; j <= c + half; j++) {
+            var lo = k ? cum[j][BANDS[k - 1]] : 0;
+            thin = Math.min(thin, (cum[j][b] - lo) / TOP * ph);
+          }
+          if (thin > bestT) { bestT = thin; best = c; }
+        }
+        return bestT >= 13 ? best : null;
+      }
+      var at = search(0, cut - half - 2), past = at !== null;
+      if (!past) at = search(cut + half + 2, N);
+      if (at === null) return;
+      var lo = k ? cum[at][BANDS[k - 1]] : 0, mid = (lo + cum[at][b]) / 2;
+      o += '<text class="blabel" x="' + f1(X(ts[at])) + '" y="' + f1(Y(mid) + 4) + '" text-anchor="middle" style="fill:' +
+        (past ? INK[b] : "var(--text)") + '">' + b + "</text>";
     });
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><text class="readout" id="readout" visibility="hidden"></text>';
 

@@ -52,7 +52,7 @@
         <summary>see the code!</summary>
         <pre class="src"><code>wk   &lt;- seq(2021.6, 2031.5, by = 1/52)                       <span class="cm"># every week since my first semester</span>
 term &lt;- 1 - 0.45 * pmax(0, cos(2 * pi * (wk - 0.54)))^4         <span class="cm"># summers run light</span>
-on   &lt;- function(a, b = Inf) plogis(12 * (wk - a)) - plogis(12 * (wk - b))
+on   &lt;- function(a, b = Inf) plogis(40 * (wk - a)) - plogis(40 * (wk - b))
 peak &lt;- function(at, h, w = 0.08) h * exp(-((wk - at) / w)^2)
 load &lt;- cbind(                                                    <span class="cm"># hours per week, by what serves them</span>
   coursework = term * (22 * on(2021.6, 2024.6) + 18 * on(2024.6, 2025.4) + 8 * on(2025.4, 2028.4)),

@@ -124,6 +124,8 @@ h1 {
 .plot .proj-text { fill: var(--text-2); font-style: italic; }
 .plot .leader { stroke: var(--text-2); stroke-width: 1; }
 .plot .event { font-size: 11.5px; }
+.plot text.blabel { font-size: 12px; font-weight: 600; pointer-events: none; }
+.plot.focus text.blabel { opacity: .35; }
 .plot .cross { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
 .plot .event, .plot .proj-text, .plot .readout { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 .plot .note { font-style: italic; }
