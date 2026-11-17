@@ -23,28 +23,37 @@
      draws load by source. The model matches the R code under "see the code!".
      Each band links to its section of the page. */
   var chunk = $("#chunk"), holder = $("#plot"), tip = $("#plot-tip"), said = $("#plot-live");
-  var T0 = 2021.6, T1 = 2031.42, TOP = 90, PHD = 2026.6, WEEK = 1 / 52;
-  var BANDS = ["software", "coursework", "methods", "teaching", "research"];          // bottom of the stack first
-  var HREF = { software: "#software", coursework: "#education", methods: "#methods", teaching: "#teaching", research: "#research" };
-  var INK = { software: "#111", coursework: "#111", methods: "#fff", teaching: "#111", research: "#111" };
-  var Z = [-1.28, -0.674, 0.674, 1.28], SPREAD = 0.08;                                 // 80% and 50% intervals
+  var T0 = 2021.6, T1 = 2031.42, TOP = 110, PHD = 2026.6, WEEK = 1 / 52;
+  var BANDS = ["software", "coursework", "industry", "methods", "teaching", "research"];   // bottom of the stack first
+  var HREF = { software: "#software", coursework: "#education", industry: "#experience", methods: "#methods", teaching: "#teaching", research: "#research" };
+  var INK = { software: "#111", coursework: "#111", industry: "#111", methods: "#fff", teaching: "#111", research: "#111" };
+  var Z = [-1.28, -0.674, 0.674, 1.28], SPREAD = 0.06;                                 // 80% and 50% intervals
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
-  function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.08), 2)); }
-  function summer(t) { return Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 4); }
-  function load(t) {
-    var s = summer(t), phd = on(t, PHD);
-    return {
+  function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.04), 2)); }
+  function frac(t) { return t - Math.floor(t); }
+  function summer(t) { var f = frac(t); return plogis(60 * (f - 0.38)) - plogis(60 * (f - 0.62)); }
+  // a week off: distance around the calendar to a fixed time of year
+  function gap(t, at, w) { var d = Math.abs(frac(t) - at); d = Math.min(d, 1 - d); return Math.exp(-Math.pow(d / w, 2)); }
+  function off(t) {   // Thanksgiving, winter break, the week of July 4, the week of July 31
+    return 1 - 0.8 * Math.max(gap(t, 0.905, 0.012), gap(t, 0.995, 0.022), gap(t, 0.505, 0.012), gap(t, 0.58, 0.012));
+  }
+  function load(t, steady) {   // steady: leave out the holiday weeks (used only to place labels)
+    var s = summer(t), phd = on(t, PHD), grow = plogis(2.5 * (t - 2028.6)), k = steady ? 1 : off(t);
+    var l = {
       software: 4 * on(t, 2025.6),
-      coursework: (1 - 0.7 * s) * (30 * on(t, 2021.6, 2024.6) + 24 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)) +
-        peak(t, 2025.37, 6),
-      methods: (1 - 0.45 * s) * (2 * on(t, 2021.6, 2024.6) + 7 * on(t, 2024.6, 2025.4) + 10 * on(t, 2025.4, PHD) +
-        16 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)) + peak(t, 2028.3, 12),
-      teaching: (1 - 0.7 * s) * 15 * phd,
-      research: (1 - 0.45 * s + 0.8 * s * phd) * (2 * on(t, 2021.6, 2024.6) + 12 * on(t, 2024.6, 2025.4) +
-        18 * on(t, 2025.4, PHD) + phd * (10 + 22 * plogis(2.5 * (t - 2028.6)))) +
-        peak(t, 2023.2, 4) + peak(t, 2026.3, 10) + peak(t, 2029.3, 8) + peak(t, 2031.3, 12, 0.1)
+      coursework: (1 - s) * (28 * on(t, 2021.6, 2024.6) + 22 * on(t, 2024.6, 2025.4) + 8 * on(t, 2025.4, 2028.4)) +
+        peak(t, 2025.37, 48),
+      industry: 2 + 8 * on(t, 2023.1, 2023.95) + s * (46 * on(t, 2021.6, 2024.6) + 20 * on(t, 2024.6, PHD)),
+      methods: (1 - 0.5 * s) * (3 * on(t, 2021.6, 2024.6) + 8 * on(t, 2024.6, 2025.4) + 12 * on(t, 2025.4, PHD) +
+        10 * on(t, PHD, 2028.4) + 6 * on(t, 2028.4)) + peak(t, 2028.3, 48),
+      teaching: (1 - s) * 10 * phd,
+      research: 3 * on(t, 2021.6, 2024.6) + 10 * on(t, 2024.6, 2025.4) + 16 * on(t, 2025.4, PHD) + phd * (4 + 14 * grow) +
+        s * (8 * on(t, 2024.6, PHD) + phd * (40 - 14 * grow)) +
+        peak(t, 2023.2, 46) + peak(t, 2026.3, 50) + peak(t, 2029.3, 50) + peak(t, 2031.3, 50)
     };
+    BANDS.forEach(function (b) { l[b] *= k; });
+    return l;
   }
   function total(l) { return BANDS.reduce(function (a, b) { return a + l[b]; }, 0); }
 
@@ -72,15 +81,23 @@
   var view = null, now = Math.min(Math.max(yearNow(), T0), T1), cursorT = now;
 
   function draw(animate) {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 290 : 350;
+    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 300 : 370;
     var m = { l: 56, r: small ? 10 : 34, t: 34, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b, base = m.t + ph;
     var X = function (t) { return m.l + (t - T0) / (T1 - T0) * pw; };
     var Y = function (v) { return base - v / TOP * ph; };
     var f1 = function (n) { return Math.round(n * 10) / 10; };
-    var N = Math.round(pw / 2), ts = [], cum = [];
+    var N = Math.round(pw), ts = [], cum = [];
+    var span = (T1 - T0) / N, steady = [];
     for (var i = 0; i <= N; i++) {
-      var t = T0 + (T1 - T0) * i / N, l = load(t), run = 0, row = {};
-      BANDS.forEach(function (b) { run += l[b]; row[b] = run; });
+      var t = T0 + span * i, run = 0, row = {}, avg = {}, ls = load(t, true), r2 = 0, row2 = {};
+      BANDS.forEach(function (b) { r2 += ls[b]; row2[b] = r2; });
+      steady.push(row2);
+      BANDS.forEach(function (b) { avg[b] = 0; });
+      for (var q = 0; q < 4; q++) {
+        var lq = load(t + span * ((q + 0.5) / 4 - 0.5));
+        BANDS.forEach(function (b) { avg[b] += lq[b] / 4; });
+      }
+      BANDS.forEach(function (b) { run += avg[b]; row[b] = run; });
       ts.push(t); cum.push(row);
     }
     var topBand = BANDS[BANDS.length - 1];
@@ -115,7 +132,7 @@
       "</defs>";
 
     o += '<rect class="proj" x="' + nx + '" y="' + m.t + '" width="' + f1(m.l + pw - nx) + '" height="' + ph + '"/>';
-    [20, 40, 60, 80].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
+    [20, 40, 60, 80, 100].forEach(function (v) { y = f1(Y(v)); o += '<path class="grid" d="M' + m.l + " " + y + "H" + (m.l + pw) + '"/>'; });
     o += '<g clip-path="url(#clip-ahead)"><g class="ahead" clip-path="url(#clip-right)">' + bands +
          '<path class="hatched" d="' + stackArea + '"/>' +
          '<path class="fan80" d="' + fan(Z[0], Z[3]) + '"/><path class="fan50" d="' + fan(Z[1], Z[2]) + '"/>' +
@@ -123,7 +140,7 @@
     o += '<g clip-path="url(#clip-past)">' + bands + '<path class="demand" d="' + edge(BANDS.length - 1) + '"/></g>';
     o += '<path class="axis" d="M' + m.l + " " + base + "H" + (m.l + pw) + '"/>';
 
-    [0, 20, 40, 60, 80].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
+    [0, 20, 40, 60, 80, 100].forEach(function (v) { o += '<text x="' + (m.l - 8) + '" y="' + f1(Y(v) + 4) + '" text-anchor="end">' + v + "</text>"; });
     o += '<text class="ytitle" transform="translate(14 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Demand (hours per week)</text>';
     for (var yr = 2022; yr <= 2031; yr += small ? 2 : 1) {
       x = f1(X(yr));
@@ -144,7 +161,9 @@
     // events: a diamond on the top of the stack, a thin leader, and a label on its row
     EVENTS.forEach(function (ev) {
       var label = small ? ev.brief : ev.text, ahead = ev.at > now;
-      var l = load(ev.at), ex = f1(X(ev.at)), ey = f1(Y(total(l))), anchor = ev.anchor || "middle";
+      var near = Math.max(0, Math.min(N, Math.round((ev.at - T0) / span))), win = cum[near][topBand];
+      for (var d = -2; d <= 2; d++) { var jj = Math.max(0, Math.min(N, near + d)); win = Math.max(win, cum[jj][topBand]); }
+      var ex = f1(X(ev.at)), ey = f1(Y(win)), anchor = ev.anchor || "middle";
       if (label) {
         var ly = rowY(ev.row), dx = anchor === "end" ? 3 : 0;
         o += '<path class="leader" d="M' + ex + " " + (ly + 4) + "V" + (ey - 6) + '"/>';
@@ -156,28 +175,35 @@
     // direct labels, on the solid side when the band fits there
     var cut = Math.round((nx - m.l) / pw * N);
     BANDS.forEach(function (b, k) {
-      var half = Math.ceil((b.length * 6.6 + 10) / 4);
-      function search(from, to) {
-        var best = null, bestT = 0;
-        for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c++) {
-          var thin = Infinity;
-          for (var j = c - half; j <= c + half; j++) thin = Math.min(thin, (cum[j][b] - (k ? cum[j][BANDS[k - 1]] : 0)) / TOP * ph);
-          if (thin > bestT) { bestT = thin; best = c; }
+      var half = Math.ceil((b.length * 6.6 + 10) / 2);
+      function corridor(c) {   // highest floor and lowest ceiling across the label's width
+        var lo = -Infinity, hi = Infinity;
+        for (var j = c - half; j <= c + half; j++) {
+          lo = Math.max(lo, k ? steady[j][BANDS[k - 1]] : 0);
+          hi = Math.min(hi, steady[j][b]);
         }
-        return bestT >= 13 ? best : null;
+        return { lo: lo, hi: hi, room: (hi - lo) / TOP * ph };
+      }
+      function search(from, to) {
+        var best = null, bestR = 0;
+        for (var c = Math.max(from, half + 4); c <= Math.min(to, N - half - 4); c += 2) {
+          var r = corridor(c).room;
+          if (r > bestR) { bestR = r; best = c; }
+        }
+        return bestR >= 14 ? best : null;
       }
       var at = search(0, cut - half - 2), past = at !== null;
       if (!past) at = search(cut + half + 2, N);
       if (at === null) return;
-      var mid = ((k ? cum[at][BANDS[k - 1]] : 0) + cum[at][b]) / 2;
+      var cr = corridor(at), mid = (cr.lo + cr.hi) / 2;
       o += '<text class="blabel" x="' + f1(X(ts[at])) + '" y="' + f1(Y(mid) + 4) + '" text-anchor="middle" style="fill:' +
-        (past ? INK[b] : "var(--text)") + '">' + b + "</text>";
+        (past ? INK[b] : "var(--text)") + ";stroke:" + (past ? "var(--b-" + b + ")" : "var(--proj-bg)") + '">' + b + "</text>";
     });
 
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
-      'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them. Coursework carries the B.S. at about 30 hours. ' +
-      'The M.I.P., from fall 2024, shifts the load to research. The Ph.D., from fall 2026, adds teaching, and the total rises to the mid 50s. ' +
+      'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them. School terms run about 40 hours, summers 50 to 60, ' +
+      'holiday weeks drop to about 10, and crunch weeks such as the capstone reach about 90. The Ph.D., from fall 2026, adds teaching. ' +
       'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();
