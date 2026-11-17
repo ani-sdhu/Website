@@ -1,22 +1,37 @@
-# Academic website (R console theme)
+# anitesh sandhu: academic website
 
-A one-page academic site styled after an RStudio session. It reads like a
-normal academic website: a top menu, your photo, name, bio, and links up front,
-and clear sections below. The R feel lives in the styling. Each section is an
-RStudio-style pane, the hero has a clickable Environment pane, tables print like
-data frames, and publications are numbered like an R vector.
+A one-page academic site laid out like an R help page: a documentation strip at
+the top, monospace headings, a two-column "arguments" table for structured
+facts, and the Environment list as the contents menu. The masthead figure is a
+transmission line whose conductors are plotted as catenaries.
 
-An optional R console (the "Console" button, or Ctrl+2) lets curious visitors
-type commands such as `research()` or `library(fixest)`. Nobody needs it to get around.
+It is plain HTML and CSS with a small script. There is no build step, and the
+page reads fine with JavaScript turned off.
 
-No build step. It is plain HTML, CSS, and JavaScript.
+## Files
 
-## Editing your content
+| File | What it is |
+| --- | --- |
+| `index.html` | All of the text. Edit this to change what the site says. |
+| `assets/css/style.css` | Layout, type, and the light and dark themes. |
+| `assets/js/site.js` | Theme switch, contents menu, and the optional R console. |
+| `assets/img/headshot.jpg` | Portrait. |
+| `files/cv.pdf` | CV. Replace this file when the CV changes. |
+| `tools/lines.js` | Generates the transmission line figure. |
 
-Everything you write lives in one file: `assets/js/content.js`.
-Your CV lives at `files/cv.pdf`; replace it when you update your CV.
+## Editing
 
-Your headshot is `assets/img/headshot.jpg`.
+Open `index.html` and change the text. Each section is a `<section>` with an
+`id`. If you add or remove a section, also update the list inside
+`<nav class="env">`. The small numbers in that list are counts of entries; keep
+them in step with the page.
+
+To redraw the figure (tower positions, sag, number of towers), edit
+`tools/lines.js` and run:
+
+```bash
+node tools/lines.js
+```
 
 ## Previewing locally
 
@@ -32,23 +47,8 @@ Then open http://localhost:8000.
 2. In the repository, open Settings, then Pages.
 3. Under "Build and deployment," choose "Deploy from a branch," pick `main` and `/ (root)`, and save.
 
-## Console commands
+## The R console
 
-| Command | What it does |
-| --- | --- |
-| `about()`, `research()`, `publications()`, `methods()`, `teaching()`, `cv()`, `contact()` | open a section |
-| `View(x)`, `print(x)`, `summary(x)` | jump to any section |
-| `ls()` | list the objects |
-| `library(pkg)` | check whether a tool is in your toolkit |
-| `theme()` | switch light and dark |
-| `citation()` | APA citation for the site |
-| `clear()` or Ctrl+L | clear the console |
-
-Direct links work too: `#research`, `#teaching`, and so on.
-
-## Fonts
-
-The site uses the same font stacks as RStudio's web IDE (Monaco on macOS,
-Consolas or Lucida Console on Windows, Ubuntu Mono elsewhere) for code-like
-text, and RStudio's UI font stack for tabs and buttons. Body text follows R's
-HTML help pages: a serif body with monospace headings.
+"R console" in the contents menu opens a small console. Each section is an
+object: `research()`, `View(methods)`, `ls()`, `help()`, `theme()`, `clear()`,
+`q()`. It is an extra; nothing on the site depends on it.

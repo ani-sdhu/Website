@@ -1,83 +1,211 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Anitesh Sandhu</title>
-  <meta name="description" content="Anitesh Sandhu, Ph.D. student in Political Science and International Affairs at the University of Georgia. Energy markets, utility regulation, and quantitative methods.">
+  <title>Anitesh Sandhu | Political Science, University of Georgia</title>
+  <meta name="description" content="Anitesh Sandhu is a Ph.D. student in Political Science and International Affairs at the University of Georgia. He studies natural gas price volatility and state public service commissions.">
   <script>
-    /* Set theme before paint to avoid a flash. */
-    (function () {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t !== "light" && t !== "dark") t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", t);
-      } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
-    })();
+    try { if (localStorage.getItem("theme") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Ubuntu Mono is the fixed-width fallback RStudio uses outside macOS and Windows. -->
-  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23171a1f'/%3E%3Cpath d='M18 4 8 18h7l-2 10 11-15h-7z' fill='%23f2a33a'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23276dc3'/%3E%3Cpath d='M6 23c5-9 15-9 20 0' fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M6 8v15M26 8v15' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="#about" aria-label="Back to top">
-        <span class="bolt" aria-hidden="true">&#9889;</span>
-        <span class="brand-name" id="brand-name"></span>
-      </a>
-      <nav class="tabs" id="nav" aria-label="Sections"></nav>
-      <div class="tools">
-        <button type="button" class="tool" id="theme-btn" aria-label="Switch light or dark theme" title="Light or dark">
-          <span aria-hidden="true">&#9680;</span>
-        </button>
-        <button type="button" class="tool tool-console" id="console-btn" aria-controls="console" aria-expanded="false" title="Open the R console (Ctrl+2)">
-          <span class="prompt-glyph" aria-hidden="true">&gt;_</span><span class="tool-label">Console</span>
-        </button>
+  <header class="wrap">
+    <p class="rd-strip" aria-hidden="true">
+      <span>sandhu {uga.polisci}</span>
+      <span>R Documentation</span>
+    </p>
+
+    <div class="masthead">
+      <div>
+        <h1>Anitesh Sandhu</h1>
+        <p class="role">Ph.D. student, Political Science and International Affairs<br>University of Georgia</p>
+        <p class="quick">
+          <a href="files/cv.pdf">CV (PDF)</a>
+          <a href="mailto:sandhuanitesh@gmail.com">Email</a>
+          <a href="https://github.com/ani-sdhu">GitHub</a>
+          <a href="https://www.linkedin.com/in/anisandhu/">LinkedIn</a>
+        </p>
       </div>
+      <img class="portrait" src="assets/img/headshot.jpg" alt="Portrait of Anitesh Sandhu" width="104" height="104">
     </div>
+
+    <figure class="fig">
+      <!-- lines:start -->
+      <svg class="lines" viewBox="0 0 1200 252" preserveAspectRatio="xMinYMax slice" aria-hidden="true" focusable="false">
+      <path class="ln-wire" d="M-273.7 100.3L-260 105.3L-246.2 109.9L-232.4 114.1L-218.6 118.1L-204.9 121.7L-191.1 124.9L-177.3 127.9L-163.6 130.5L-149.8 132.7L-136 134.7L-122.3 136.3L-108.5 137.6L-94.7 138.5L-81 139.2L-67.2 139.5L-53.4 139.5L-39.7 139.2L-25.9 138.5L-12.1 137.5L1.6 136.2L15.4 134.6L29.2 132.6L42.9 130.4L56.7 127.7L70.5 124.8M-146.3 100.3L-132.1 105.5L-117.9 110.3L-103.8 114.7L-89.6 118.6L-75.4 122.2L-61.2 125.4L-47.1 128.3L-32.9 130.7L-18.7 132.8L-4.6 134.4L9.6 135.7L23.8 136.6L38 137.1L52.1 137.3L66.3 137.1L80.5 136.5L94.7 135.5L108.8 134.1L123 132.4L137.2 130.2L151.3 127.7L165.5 124.8M-260.7 67.3L-246.5 72.7L-232.3 77.8L-218.1 82.6L-203.9 87L-189.7 91L-175.5 94.6L-161.3 97.9L-147.1 100.9L-132.9 103.4L-118.7 105.7L-104.5 107.5L-90.3 109.1L-76.1 110.2L-61.9 111.1L-47.7 111.6L-33.5 111.7L-19.3 111.5L-5.1 110.9L9.1 110L23.3 108.7L37.5 107.1L51.8 105.1L66 102.8L80.2 100.2M-159.3 67.3L-145.6 72.7L-131.9 77.7L-118.2 82.3L-104.5 86.6L-90.8 90.5L-77.1 94.1L-63.4 97.2L-49.7 100.1L-36 102.5L-22.3 104.7L-8.6 106.4L5.1 107.8L18.8 108.9L32.5 109.6L46.2 110L59.9 110L73.6 109.6L87.3 108.9L101 107.9L114.7 106.5L128.4 104.7L142.1 102.6L155.8 100.2M-247.8 34.2L-233.7 40L-219.6 45.5L-205.6 50.5L-191.5 55.2L-177.4 59.6L-163.4 63.6L-149.3 67.2L-135.2 70.5L-121.2 73.4L-107.1 76L-93 78.2L-79 80.1L-64.9 81.6L-50.8 82.8L-36.8 83.6L-22.7 84.1L-8.6 84.2L5.4 84L19.5 83.5L33.6 82.6L47.6 81.3L61.7 79.7L75.8 77.8L89.8 75.5M-172.2 34.2L-158.4 40L-144.6 45.5L-130.7 50.5L-116.9 55.2L-103 59.5L-89.2 63.5L-75.3 67L-61.5 70.3L-47.6 73.1L-33.8 75.6L-20 77.7L-6.1 79.5L7.7 80.9L21.6 82L35.4 82.7L49.3 83L63.1 83L76.9 82.6L90.8 81.9L104.6 80.9L118.5 79.4L132.3 77.7L146.2 75.5M-210 0L-195.7 4.9L-181.5 9.5L-167.2 13.8L-153 18L-138.7 21.8L-124.4 25.4L-110.2 28.8L-95.9 32L-81.7 34.8L-67.4 37.5L-53.1 39.9L-38.9 42L-24.6 44L-10.3 45.6L3.9 47.1L18.2 48.3L32.4 49.2L46.7 50L61 50.5L75.2 50.7L89.5 50.7L103.7 50.5L118 50M70.5 124.8L84.2 129.6L97.9 133.9L111.6 137.9L125.4 141.5L139.1 144.8L152.8 147.6L166.5 150.1L180.3 152.2L194 154L207.7 155.3L221.4 156.3L235.1 157L248.9 157.3L262.6 157.2L276.3 156.7L290 155.9L303.8 154.7L317.5 153.1L331.2 151.2L344.9 148.8L358.6 146.2L372.4 143.1M165.5 124.8L179.4 129.7L193.3 134.1L207.2 138.2L221.1 141.8L235.1 144.9L249 147.7L262.9 150L276.8 152L290.7 153.5L304.6 154.6L318.5 155.3L332.4 155.6L346.3 155.5L360.2 154.9L374.1 154L388 152.6L401.9 150.9L415.8 148.7L429.7 146.1L443.6 143.1M80.2 100.2L94.4 105.4L108.7 110.2L122.9 114.7L137.2 118.6L151.5 122.2L165.7 125.4L180 128.2L194.2 130.5L208.5 132.5L222.8 134L237 135.2L251.3 135.9L265.5 136.3L279.8 136.2L294.1 135.8L308.3 134.9L322.6 133.7L336.8 132L351.1 129.9L365.4 127.5L379.6 124.6M155.8 100.2L169.9 105.4L183.9 110.2L197.9 114.6L211.9 118.5L226 122L240 125.1L254 127.8L268.1 130L282.1 131.8L296.1 133.2L310.1 134.2L324.2 134.8L338.2 135L352.2 134.8L366.2 134.1L380.3 133L394.3 131.6L408.3 129.7L422.4 127.4L436.4 124.6M89.8 75.5L104 81L118.1 86.2L132.3 90.8L146.4 95.1L160.6 99L174.7 102.4L188.9 105.5L203 108.1L217.1 110.3L231.3 112.2L245.4 113.6L259.6 114.7L273.7 115.3L287.9 115.5L302 115.4L316.2 114.8L330.3 113.9L344.4 112.6L358.6 110.8L372.7 108.7L386.9 106.1M146.2 75.5L160.3 81.1L174.5 86.3L188.6 91L202.8 95.3L216.9 99.1L231 102.5L245.2 105.5L259.3 108L273.5 110.2L287.6 111.9L301.8 113.2L315.9 114.1L330.1 114.6L344.2 114.6L358.4 114.2L372.5 113.5L386.7 112.3L400.8 110.6L415 108.6L429.1 106.1M118 50L131.8 54.3L145.6 58.4L159.4 62.2L173.2 65.8L187 69.1L200.9 72.1L214.7 74.9L228.5 77.4L242.3 79.7L256.1 81.7L269.9 83.4L283.7 84.9L297.5 86.2L311.3 87.2L325.1 87.9L339 88.4L352.8 88.6L366.6 88.6L380.4 88.3L394.2 87.8L408 87M372.4 143.1L386.5 147.9L400.7 152.1L414.8 155.9L429 159.2L443.1 161.9L457.3 164.2L471.4 165.9L485.6 167.2L499.8 168L513.9 168.3L528.1 168.1L542.2 167.4L556.4 166.2L570.5 164.5L584.7 162.3L598.8 159.7L613 156.5M443.6 143.1L457.6 147.9L471.6 152.1L485.5 155.8L499.5 158.9L513.4 161.6L527.4 163.7L541.4 165.3L555.3 166.4L569.3 166.9L583.2 167L597.2 166.5L611.2 165.6L625.1 164.1L639.1 162.1L653 159.5L667 156.5M379.6 124.6L393.7 129.6L407.7 134.2L421.8 138.2L435.8 141.7L449.9 144.7L463.9 147.2L478 149.2L492 150.7L506.1 151.8L520.1 152.3L534.2 152.4L548.2 151.9L562.3 151L576.3 149.6L590.4 147.8L604.4 145.4L618.5 142.5M436.4 124.6L450.5 129.7L464.5 134.2L478.6 138.2L492.7 141.7L506.7 144.6L520.8 147L534.9 148.9L548.9 150.3L563 151.1L577.1 151.5L591.2 151.3L605.2 150.5L619.3 149.3L633.4 147.6L647.4 145.3L661.5 142.5M386.9 106.1L400.8 111.4L414.8 116.2L428.7 120.4L442.7 124.2L456.6 127.4L470.6 130.2L484.5 132.5L498.5 134.2L512.4 135.5L526.4 136.4L540.3 136.7L554.3 136.5L568.2 135.9L582.2 134.8L596.1 133.2L610.1 131.1L624 128.5M429.1 106.1L443.3 111.5L457.5 116.4L471.7 120.7L485.8 124.5L500 127.7L514.2 130.4L528.4 132.6L542.6 134.2L556.7 135.3L570.9 135.9L585.1 136L599.3 135.5L613.5 134.6L627.6 133.1L641.8 131L656 128.5M408 87L421.6 91.1L435.3 94.9L448.9 98.4L462.6 101.5L476.2 104.3L489.9 106.8L503.5 109L517.2 110.9L530.8 112.5L544.5 113.8L558.1 114.7L571.8 115.4L585.4 115.7L599.1 115.8L612.7 115.5L626.4 114.9L640 114M613 156.5L627.5 161.3L642 165.4L656.5 168.9L671 171.6L685.5 173.7L700 175.2L714.5 175.9L729 176.1L743.5 175.5L758 174.3L772.5 172.5L787 170L801.5 166.8M667 156.5L680.5 161L694 164.9L707.5 168.2L721 170.8L734.5 172.8L748 174.2L761.5 175L775 175.2L788.5 174.7L802 173.7L815.5 172L829 169.7L842.5 166.8M618.5 142.5L632.9 147.5L647.3 151.9L661.7 155.6L676.1 158.6L690.5 160.9L704.9 162.6L719.3 163.7L733.7 164L748.1 163.8L762.5 162.9L776.9 161.3L791.3 159.1L805.7 156.2M661.5 142.5L675.1 147.3L688.7 151.5L702.3 155L715.9 157.9L729.5 160.2L743.1 161.9L756.7 162.9L770.3 163.3L783.9 163.1L797.5 162.3L811.1 160.9L824.7 158.8L838.3 156.2M624 128.5L638.3 133.8L652.6 138.4L666.9 142.3L681.2 145.6L695.5 148.2L709.8 150.1L724.1 151.4L738.4 152L752.7 152L767 151.4L781.2 150.1L795.5 148.1L809.8 145.5M656 128.5L669.7 133.6L683.4 138.1L697.1 141.9L710.8 145.1L724.5 147.6L738.2 149.5L751.9 150.8L765.6 151.5L779.3 151.5L793 151L806.8 149.8L820.5 148L834.2 145.5M640 114L654 118.1L668 121.8L682 125L696 127.9L710 130.3L724 132.2L738 133.8L752 135L766 135.7L780 136L794 135.9L808 135.4L822 134.5M801.5 166.8L813.6 170.8L825.6 174.1L837.7 176.9L849.8 179L861.8 180.5L873.9 181.5L886 181.8L898.1 181.6L910.1 180.7L922.2 179.3L934.3 177.3L946.3 174.7M842.5 166.8L853.8 170.5L865 173.7L876.3 176.3L887.6 178.4L898.8 179.8L910.1 180.7L921.4 181.1L932.6 180.9L943.9 180.2L955.1 178.9L966.4 177.1L977.7 174.7M805.7 156.2L817.6 160.3L829.6 163.9L841.6 166.8L853.6 169.1L865.6 170.9L877.6 172L889.6 172.6L901.6 172.6L913.6 171.9L925.6 170.7L937.5 168.9L949.5 166.5M838.3 156.2L849.7 160.1L861 163.6L872.4 166.4L883.7 168.6L895.1 170.3L906.4 171.5L917.7 172L929.1 172L940.4 171.5L951.8 170.4L963.1 168.8L974.5 166.5M809.8 145.5L821.7 149.9L833.7 153.6L845.6 156.8L857.5 159.3L869.4 161.2L881.3 162.6L893.2 163.4L905.1 163.5L917 163.1L928.9 162.1L940.8 160.6L952.7 158.4M834.2 145.5L845.6 149.7L857 153.4L868.4 156.4L879.9 158.9L891.3 160.8L902.7 162.2L914.1 162.9L925.6 163.2L937 162.8L948.4 161.9L959.9 160.4L971.3 158.4M822 134.5L833.7 137.9L845.3 140.9L857 143.5L868.7 145.7L880.3 147.6L892 149L903.7 150.1L915.3 150.9L927 151.2L938.7 151.2L950.3 150.8L962 150M946.3 174.7L955.7 177.7L965 180.3L974.3 182.5L983.6 184.1L992.9 185.3L1002.2 186.1L1011.5 186.4L1020.9 186.2L1030.2 185.6L1039.5 184.5L1048.8 182.9L1058.1 180.9M977.7 174.7L986.3 177.6L995 180L1003.7 182L1012.4 183.6L1021.1 184.8L1029.8 185.5L1038.5 185.8L1047.1 185.7L1055.8 185.1L1064.5 184.2L1073.2 182.7L1081.9 180.9M949.5 166.5L958.8 169.8L968 172.5L977.3 174.8L986.5 176.6L995.8 178L1005 178.9L1014.3 179.3L1023.5 179.3L1032.8 178.9L1042 177.9L1051.3 176.6L1060.5 174.7M974.5 166.5L983.2 169.6L992 172.3L1000.7 174.5L1009.5 176.2L1018.2 177.5L1027 178.4L1035.7 178.9L1044.5 178.9L1053.2 178.5L1062 177.7L1070.7 176.4L1079.5 174.7M952.7 158.4L961.9 161.8L971.1 164.7L980.3 167.1L989.5 169.1L998.7 170.6L1007.8 171.7L1017 172.3L1026.2 172.5L1035.4 172.2L1044.6 171.4L1053.8 170.2L1063 168.6M971.3 158.4L980.1 161.7L988.9 164.5L997.7 166.9L1006.5 168.8L1015.3 170.3L1024.2 171.4L1033 172L1041.8 172.2L1050.6 171.9L1059.4 171.2L1068.2 170.1L1077 168.6M962 150L971 152.6L980 155L989 157L998 158.7L1007 160.2L1016 161.3L1025 162.2L1034 162.8L1043 163.1L1052 163.1L1061 162.8L1070 162.2M1058.1 180.9L1065.2 183.2L1072.2 185.2L1079.3 186.8L1086.4 188L1093.4 188.9L1100.5 189.5L1107.5 189.7L1114.6 189.5L1121.6 189L1128.7 188.2L1135.8 187L1142.8 185.4M1081.9 180.9L1088.5 183.1L1095.1 184.9L1101.7 186.5L1108.3 187.7L1114.9 188.5L1121.5 189.1L1128.1 189.3L1134.7 189.2L1141.4 188.7L1148 188L1154.6 186.9L1161.2 185.5M1060.5 174.7L1067.6 177.2L1074.6 179.2L1081.6 180.9L1088.6 182.3L1095.6 183.3L1102.6 184L1109.6 184.3L1116.6 184.3L1123.7 183.9L1130.7 183.2L1137.7 182.1L1144.7 180.7M1079.5 174.7L1086.1 177.1L1092.8 179.1L1099.4 180.7L1106.1 182L1112.7 183L1119.4 183.6L1126 184L1132.7 184L1139.3 183.6L1146 183L1152.7 182L1159.3 180.7M1063 168.6L1069.9 171.1L1076.9 173.3L1083.9 175.1L1090.8 176.6L1097.8 177.7L1104.8 178.5L1111.7 178.9L1118.7 179L1125.7 178.7L1132.6 178.1L1139.6 177.2L1146.6 175.9M1077 168.6L1083.7 171L1090.4 173.2L1097.1 174.9L1103.8 176.4L1110.5 177.5L1117.2 178.2L1123.9 178.7L1130.6 178.8L1137.3 178.6L1144 178L1150.7 177.1L1157.4 175.9M1070 162.2L1076.8 164.2L1083.7 165.9L1090.5 167.4L1097.3 168.7L1104.2 169.7L1111 170.6L1117.8 171.2L1124.7 171.6L1131.5 171.8L1138.3 171.7L1145.2 171.5L1152 171M1142.8 185.5L1148.3 187.3L1153.8 188.8L1159.4 190L1164.9 191L1170.4 191.7L1175.9 192.2L1181.4 192.3L1186.9 192.2L1192.4 191.8L1198 191.2L1203.5 190.3L1209 189.1M1161.2 185.5L1166.3 187.2L1171.5 188.6L1176.6 189.8L1181.8 190.7L1186.9 191.4L1192.1 191.8L1197.3 192L1202.4 191.9L1207.6 191.6L1212.7 191L1217.9 190.2L1223 189M1144.7 180.7L1150.2 182.6L1155.6 184.2L1161.1 185.5L1166.6 186.6L1172.1 187.4L1177.6 187.9L1183 188.2L1188.5 188.2L1194 187.9L1199.5 187.3L1204.9 186.5L1210.4 185.4M1159.3 180.7L1164.5 182.5L1169.7 184.1L1174.9 185.4L1180.1 186.4L1185.3 187.2L1190.4 187.7L1195.6 187.9L1200.8 187.9L1206 187.7L1211.2 187.2L1216.4 186.4L1221.6 185.4M1146.6 175.9L1152 177.9L1157.4 179.6L1162.9 181.1L1168.3 182.2L1173.8 183.1L1179.2 183.7L1184.6 184L1190.1 184.1L1195.5 183.9L1201 183.5L1206.4 182.8L1211.8 181.8M1157.4 175.9L1162.7 177.9L1167.9 179.5L1173.1 180.9L1178.3 182L1183.6 182.9L1188.8 183.5L1194 183.9L1199.3 184L1204.5 183.8L1209.7 183.4L1214.9 182.7L1220.2 181.8M1152 171L1157.3 172.5L1162.7 173.9L1168 175.1L1173.3 176.1L1178.7 176.9L1184 177.6L1189.3 178.1L1194.7 178.4L1200 178.6L1205.3 178.6L1210.7 178.4L1216 178"/>
+      <path class="ln-tower" d="M-240.7 236L-219.4 106.2L-215.2 7.1L-210 0L-204.8 7.1L-200.6 106.2L-179.3 236M-240.7 236L-185.1 200.6M-179.3 236L-234.9 200.6M-234.9 200.6L-185.1 200.6M-234.9 200.6L-190.1 169.9M-185.1 200.6L-229.9 169.9M-229.9 169.9L-190.1 169.9M-229.9 169.9L-194.4 144M-190.1 169.9L-225.6 144M-225.6 144L-194.4 144M-225.6 144L-197.9 122.7M-194.4 144L-222.1 122.7M-222.1 122.7L-197.9 122.7M-222.1 122.7L-200.6 106.2M-197.9 122.7L-219.4 106.2M-219.4 106.2L-200.6 106.2M-219.4 106.2L-201.5 85M-200.6 106.2L-218.5 85M-218.5 85L-201.5 85M-218.5 85L-202.3 66.1M-201.5 85L-217.7 66.1M-217.7 66.1L-202.3 66.1M-217.7 66.1L-203.1 47.2M-202.3 66.1L-216.9 47.2M-216.9 47.2L-203.1 47.2M-216.9 47.2L-203.9 28.3M-203.1 47.2L-216.1 28.3M-216.1 28.3L-203.9 28.3M-216.1 28.3L-204.8 7.1M-203.9 28.3L-215.2 7.1M-218.7 89.7L-273.7 89.7L-218.1 75.5M-273.7 89.7L-273.7 100.3M-201.3 89.7L-146.3 89.7L-201.9 75.5M-146.3 89.7L-146.3 100.3M-217.3 56.6L-260.7 56.6L-216.7 42.5M-260.7 56.6L-260.7 67.3M-202.7 56.6L-159.3 56.6L-203.3 42.5M-159.3 56.6L-159.3 67.3M-215.9 23.6L-247.8 23.6L-215.3 9.4M-247.8 23.6L-247.8 34.2M-204.1 23.6L-172.2 23.6L-204.7 9.4M-172.2 23.6L-172.2 34.2M95.1 226L111 129.2L114.1 55.3L118 50L121.9 55.3L125 129.2L140.9 226M95.1 226L136.6 199.6M140.9 226L99.4 199.6M99.4 199.6L136.6 199.6M99.4 199.6L132.8 176.7M136.6 199.6L103.2 176.7M103.2 176.7L132.8 176.7M103.2 176.7L129.6 157.4M132.8 176.7L106.4 157.4M106.4 157.4L129.6 157.4M106.4 157.4L127.1 141.5M129.6 157.4L108.9 141.5M108.9 141.5L127.1 141.5M108.9 141.5L125 129.2M127.1 141.5L111 129.2M111 129.2L125 129.2M111 129.2L124.4 113.4M125 129.2L111.6 113.4M111.6 113.4L124.4 113.4M111.6 113.4L123.8 99.3M124.4 113.4L112.2 99.3M112.2 99.3L123.8 99.3M112.2 99.3L123.2 85.2M123.8 99.3L112.8 85.2M112.8 85.2L123.2 85.2M112.8 85.2L122.6 71.1M123.2 85.2L113.4 71.1M113.4 71.1L122.6 71.1M113.4 71.1L121.9 55.3M122.6 71.1L114.1 55.3M111.5 116.9L70.5 116.9L111.9 106.3M70.5 116.9L70.5 124.8M124.5 116.9L165.5 116.9L124.1 106.3M165.5 116.9L165.5 124.8M112.5 92.2L80.2 92.2L113 81.7M80.2 92.2L80.2 100.2M123.5 92.2L155.8 92.2L123 81.7M155.8 92.2L155.8 100.2M113.6 67.6L89.8 67.6L114.1 57M89.8 67.6L89.8 75.5M122.4 67.6L146.2 67.6L121.9 57M146.2 67.6L146.2 75.5M390.8 219L402.7 146.4L405.1 91L408 87L410.9 91L413.3 146.4L425.2 219M390.8 219L421.9 199.2M425.2 219L394.1 199.2M394.1 199.2L421.9 199.2M394.1 199.2L419.1 182M421.9 199.2L396.9 182M396.9 182L419.1 182M396.9 182L416.7 167.5M419.1 182L399.3 167.5M399.3 167.5L416.7 167.5M399.3 167.5L414.8 155.6M416.7 167.5L401.2 155.6M401.2 155.6L414.8 155.6M401.2 155.6L413.3 146.4M414.8 155.6L402.7 146.4M402.7 146.4L413.3 146.4M402.7 146.4L412.8 134.5M413.3 146.4L403.2 134.5M403.2 134.5L412.8 134.5M403.2 134.5L412.3 124M412.8 134.5L403.7 124M403.7 124L412.3 124M403.7 124L411.9 113.4M412.3 124L404.1 113.4M404.1 113.4L411.9 113.4M404.1 113.4L411.4 102.8M411.9 113.4L404.6 102.8M404.6 102.8L411.4 102.8M404.6 102.8L410.9 91M411.4 102.8L405.1 91M403.1 137.2L372.4 137.2L403.5 129.2M372.4 137.2L372.4 143.1M412.9 137.2L443.6 137.2L412.5 129.2M443.6 137.2L443.6 143.1M403.9 118.7L379.6 118.7L404.2 110.8M379.6 118.7L379.6 124.6M412.1 118.7L436.4 118.7L411.8 110.8M436.4 118.7L436.4 124.6M404.7 100.2L386.9 100.2L405 92.3M386.9 100.2L386.9 106.1M411.3 100.2L429.1 100.2L411 92.3M429.1 100.2L429.1 106.1M627 214L636 159L637.8 117L640 114L642.2 117L644 159L653 214M627 214L649.7 194M653 214L630.3 194M630.3 194L649.7 194M630.3 194L646.8 176M649.7 194L633.2 176M633.2 176L646.8 176M633.2 176L644 159M646.8 176L636 159M636 159L644 159M636 159L643.4 145M644 159L636.6 145M636.6 145L643.4 145M636.6 145L642.8 131M643.4 145L637.2 131M637.2 131L642.8 131M637.2 131L642.2 117M642.8 131L637.8 117M636.3 152L613 152L636.6 146M613 152L613 156.5M643.7 152L667 152L643.4 146M667 152L667 156.5M636.9 138L618.5 138L637.2 132M618.5 138L618.5 142.5M643.1 138L661.5 138L642.8 132M661.5 138L661.5 142.5M637.5 124L624 124L637.8 118M624 124L624 128.5M642.5 124L656 124L642.2 118M656 124L656 128.5M812.1 210.5L819 168.7L820.3 136.8L822 134.5L823.7 136.8L825 168.7L831.9 210.5M812.1 210.5L829.4 195.3M831.9 210.5L814.6 195.3M814.6 195.3L829.4 195.3M814.6 195.3L827.2 181.6M829.4 195.3L816.8 181.6M816.8 181.6L827.2 181.6M816.8 181.6L825 168.7M827.2 181.6L819 168.7M819 168.7L825 168.7M819 168.7L824.6 158.1M825 168.7L819.4 158.1M819.4 158.1L824.6 158.1M819.4 158.1L824.1 147.4M824.6 158.1L819.9 147.4M819.9 147.4L824.1 147.4M819.9 147.4L823.7 136.8M824.1 147.4L820.3 136.8M819.2 163.4L801.5 163.4L819.4 158.8M801.5 163.4L801.5 166.8M824.8 163.4L842.5 163.4L824.6 158.8M842.5 163.4L842.5 166.8M819.6 152.7L805.7 152.7L819.8 148.2M805.7 152.7L805.7 156.2M824.4 152.7L838.3 152.7L824.2 148.2M838.3 152.7L838.3 156.2M820.1 142.1L809.8 142.1L820.3 137.5M809.8 142.1L809.8 145.5M823.9 142.1L834.2 142.1L823.7 137.5M834.2 142.1L834.2 145.5M954.5 208L959.7 176.1L960.7 151.7L962 150L963.3 151.7L964.3 176.1L969.5 208M954.5 208L967.6 196.4M969.5 208L956.4 196.4M956.4 196.4L967.6 196.4M956.4 196.4L965.9 186M967.6 196.4L958.1 186M958.1 186L965.9 186M958.1 186L964.3 176.1M965.9 186L959.7 176.1M959.7 176.1L964.3 176.1M959.7 176.1L964 168M964.3 176.1L960 168M960 168L964 168M960 168L963.6 159.9M964 168L960.4 159.9M960.4 159.9L963.6 159.9M960.4 159.9L963.3 151.7M963.6 159.9L960.7 151.7M959.9 172L946.3 172L960 168.6M946.3 172L946.3 174.7M964.1 172L977.7 172L964 168.6M977.7 172L977.7 174.7M960.2 163.9L949.5 163.9L960.4 160.4M949.5 163.9L949.5 166.5M963.8 163.9L974.5 163.9L963.6 160.4M974.5 163.9L974.5 166.5M960.6 155.8L952.7 155.8L960.7 152.3M952.7 155.8L952.7 158.4M963.5 155.8L971.3 155.8L963.3 152.3M971.3 155.8L971.3 158.4M1064.3 206.2L1068.2 182L1069 163.5L1070 162.2L1071 163.5L1071.8 182L1075.7 206.2M1064.3 206.2L1074.3 197.4M1075.7 206.2L1065.7 197.4M1065.7 197.4L1074.3 197.4M1065.7 197.4L1073 189.5M1074.3 197.4L1067 189.5M1067 189.5L1073 189.5M1067 189.5L1071.8 182M1073 189.5L1068.2 182M1068.2 182L1071.8 182M1068.2 182L1071.5 175.8M1071.8 182L1068.5 175.8M1068.5 175.8L1071.5 175.8M1068.5 175.8L1071.2 169.7M1071.5 175.8L1068.8 169.7M1068.8 169.7L1071.2 169.7M1068.8 169.7L1071 163.5M1071.2 169.7L1069 163.5M1068.4 178.9L1058.1 178.9L1068.5 176.3M1058.1 178.9L1058.1 180.9M1071.6 178.9L1081.9 178.9L1071.5 176.3M1081.9 178.9L1081.9 180.9M1068.6 172.8L1060.5 172.8L1068.7 170.1M1060.5 172.8L1060.5 174.7M1071.4 172.8L1079.5 172.8L1071.3 170.1M1079.5 172.8L1079.5 174.7M1068.9 166.6L1063 166.6L1069 164M1063 166.6L1063 168.6M1071.1 166.6L1077 166.6L1071 164M1077 166.6L1077 168.6M1147.6 205L1150.6 186.3L1151.3 172L1152 171L1152.7 172L1153.4 186.3L1156.4 205M1147.6 205L1155.3 198.2M1156.4 205L1148.7 198.2M1148.7 198.2L1155.3 198.2M1148.7 198.2L1154.3 192.1M1155.3 198.2L1149.7 192.1M1149.7 192.1L1154.3 192.1M1149.7 192.1L1153.4 186.3M1154.3 192.1L1150.6 186.3M1150.6 186.3L1153.4 186.3M1150.6 186.3L1153.2 181.5M1153.4 186.3L1150.8 181.5M1150.8 181.5L1153.2 181.5M1150.8 181.5L1153 176.8M1153.2 181.5L1151 176.8M1151 176.8L1153 176.8M1151 176.8L1152.7 172M1153 176.8L1151.3 172M1150.7 183.9L1142.8 183.9L1150.8 181.9M1142.8 183.9L1142.8 185.5M1153.3 183.9L1161.2 183.9L1153.2 181.9M1161.2 183.9L1161.2 185.5M1150.9 179.2L1144.7 179.2L1151 177.1M1144.7 179.2L1144.7 180.7M1153.1 179.2L1159.3 179.2L1153 177.1M1159.3 179.2L1159.3 180.7M1151.2 174.4L1146.6 174.4L1151.2 172.4M1146.6 174.4L1146.6 175.9M1152.9 174.4L1157.4 174.4L1152.8 172.4M1157.4 174.4L1157.4 175.9M1212.6 204L1215 189.7L1215.4 178.8L1216 178L1216.6 178.8L1217 189.7L1219.4 204M1212.6 204L1218.5 198.8M1219.4 204L1213.5 198.8M1213.5 198.8L1218.5 198.8M1213.5 198.8L1217.8 194.1M1218.5 198.8L1214.2 194.1M1214.2 194.1L1217.8 194.1M1214.2 194.1L1217 189.7M1217.8 194.1L1215 189.7M1215 189.7L1217 189.7M1215 189.7L1216.9 186.1M1217 189.7L1215.1 186.1M1215.1 186.1L1216.9 186.1M1215.1 186.1L1216.7 182.4M1216.9 186.1L1215.3 182.4M1215.3 182.4L1216.7 182.4M1215.3 182.4L1216.6 178.8M1216.7 182.4L1215.4 178.8M1215 187.9L1209 187.9L1215.1 186.3M1209 187.9L1209 189.1M1217 187.9L1223 187.9L1216.9 186.3M1223 187.9L1223 189.1M1215.2 184.2L1210.4 184.2L1215.3 182.7M1210.4 184.2L1210.4 185.4M1216.8 184.2L1221.6 184.2L1216.7 182.7M1221.6 184.2L1221.6 185.4M1215.4 180.6L1211.8 180.6L1215.4 179M1211.8 180.6L1211.8 181.8M1216.7 180.6L1220.2 180.6L1216.6 179M1220.2 180.6L1220.2 181.8"/>
+      <path class="ln-live" pathLength="1000" d="M-146.3 100.3L-132.1 105.5L-117.9 110.3L-103.8 114.7L-89.6 118.6L-75.4 122.2L-61.2 125.4L-47.1 128.3L-32.9 130.7L-18.7 132.8L-4.6 134.4L9.6 135.7L23.8 136.6L38 137.1L52.1 137.3L66.3 137.1L80.5 136.5L94.7 135.5L108.8 134.1L123 132.4L137.2 130.2L151.3 127.7L165.5 124.8L165.5 124.8L179.4 129.7L193.3 134.1L207.2 138.2L221.1 141.8L235.1 144.9L249 147.7L262.9 150L276.8 152L290.7 153.5L304.6 154.6L318.5 155.3L332.4 155.6L346.3 155.5L360.2 154.9L374.1 154L388 152.6L401.9 150.9L415.8 148.7L429.7 146.1L443.6 143.1L443.6 143.1L457.6 147.9L471.6 152.1L485.5 155.8L499.5 158.9L513.4 161.6L527.4 163.7L541.4 165.3L555.3 166.4L569.3 166.9L583.2 167L597.2 166.5L611.2 165.6L625.1 164.1L639.1 162.1L653 159.5L667 156.5L667 156.5L680.5 161L694 164.9L707.5 168.2L721 170.8L734.5 172.8L748 174.2L761.5 175L775 175.2L788.5 174.7L802 173.7L815.5 172L829 169.7L842.5 166.8L842.5 166.8L853.8 170.5L865 173.7L876.3 176.3L887.6 178.4L898.8 179.8L910.1 180.7L921.4 181.1L932.6 180.9L943.9 180.2L955.1 178.9L966.4 177.1L977.7 174.7L977.7 174.7L986.3 177.6L995 180L1003.7 182L1012.4 183.6L1021.1 184.8L1029.8 185.5L1038.5 185.8L1047.1 185.7L1055.8 185.1L1064.5 184.2L1073.2 182.7L1081.9 180.9L1081.9 180.9L1088.5 183.1L1095.1 184.9L1101.7 186.5L1108.3 187.7L1114.9 188.5L1121.5 189.1L1128.1 189.3L1134.7 189.2L1141.4 188.7L1148 188L1154.6 186.9L1161.2 185.5L1161.2 185.5L1166.3 187.2L1171.5 188.6L1176.6 189.8L1181.8 190.7L1186.9 191.4L1192.1 191.8L1197.3 192L1202.4 191.9L1207.6 191.6L1212.7 191L1217.9 190.2L1223 189"/>
+      <path class="ln-axis" d="M0 240H1200M40 240v6M120 240v6M200 240v6M280 240v6M360 240v6M440 240v6M520 240v6M600 240v6M680 240v6M760 240v6M840 240v6M920 240v6M1000 240v6M1080 240v6M1160 240v6"/>
+      </svg>
+      <!-- lines:end -->
+      <figcaption>A transmission line. Each conductor is plotted as a catenary, <code>a * cosh((x - x0) / a) + c</code>.</figcaption>
+    </figure>
   </header>
 
-  <main id="main"></main>
+  <div class="wrap layout">
+    <nav class="env" aria-label="Contents">
+      <button type="button" class="env-toggle" id="env-toggle" aria-expanded="false" aria-controls="env-list">
+        <span>Contents</span><span class="env-now" id="env-now">description</span>
+      </button>
+      <div class="env-body" id="env-list">
+        <p class="env-cap" aria-hidden="true">Environment</p>
+        <ul>
+          <li><a href="#description">description</a></li>
+          <li><a href="#research">research <span class="n" aria-hidden="true">3</span></a></li>
+          <li><a href="#software">software <span class="n" aria-hidden="true">2</span></a></li>
+          <li><a href="#methods">methods <span class="n" aria-hidden="true">5</span></a></li>
+          <li><a href="#teaching">teaching <span class="n" aria-hidden="true">1</span></a></li>
+          <li><a href="#education">education <span class="n" aria-hidden="true">3</span></a></li>
+          <li><a href="#experience">experience <span class="n" aria-hidden="true">2</span></a></li>
+          <li><a href="#contact">contact</a></li>
+        </ul>
+        <p class="env-foot">
+          <button type="button" class="text-btn" data-theme-toggle>Dark theme</button>
+          <button type="button" class="text-btn console-open" data-console-open aria-controls="console" aria-expanded="false">R console</button>
+        </p>
+      </div>
+    </nav>
 
-  <footer class="statusbar">
-    <div class="statusbar-inner">
-      <span class="status-dot" aria-hidden="true"></span>
-      <span>grid: connected</span>
-      <span class="sep" aria-hidden="true">|</span>
-      <span id="footer-copy"></span>
-      <span class="status-right">Built in plain HTML. Styled after an R session.</span>
+    <main id="main">
+      <section id="description" aria-labelledby="h-description">
+        <h2 id="h-description">Description</h2>
+        <p class="lede">I study natural gas price volatility and the decisions of state public service commissions. I use time-series volatility models, vote-level regression, and text analysis.</p>
+        <p>I am a first-year Ph.D. student in Political Science and International Affairs at the University of Georgia, on the methodology track with an energy emphasis. I work as an Energy Analyst at UGA's Benson-Bertsch Center for International Trade and Security. I have also worked in the energy industry, on LNG and oil market risk and on a land drilling rig refurbishment project.</p>
+      </section>
+
+      <section id="research" aria-labelledby="h-research">
+        <h2 id="h-research">Research</h2>
+
+        <h3 class="label">In progress</h3>
+        <article class="entry">
+          <h4>Partisanship and decision-making on state public service commissions</h4>
+          <p class="how">Vote-level regression with vote fixed effects</p>
+          <p>I compare votes on elected partisan commissions, appointed commissions with party-balance rules, and appointed commissions without such rules. Vote-level regressions with vote fixed effects estimate the partisan gap.</p>
+        </article>
+        <article class="entry">
+          <h4>Weather shocks and natural gas price volatility: a five-state panel</h4>
+          <p class="how">EGARCH, EGARCH-X, HAR-RV</p>
+          <p>EGARCH and EGARCH-X models for Delaware, Florida, Georgia, Maryland, and Ohio, with heating and cooling degree day surprises as exogenous regressors. A companion HAR-RV adaptation uses daily Henry Hub spot prices.</p>
+        </article>
+        <article class="entry">
+          <h4>The strategic deployment of rhetoric by states</h4>
+          <p class="how">Natural language processing</p>
+          <p>I use natural language processing to measure how states use rhetoric strategically, and I test whether that rhetoric helps predict political violence. Presented at the Southeast Undergraduate Research Conference, Athens, GA, 2023.</p>
+        </article>
+
+        <h3 class="label">Master's capstone</h3>
+        <article class="entry">
+          <h4>The Impact of Communication on U.S.-Saudi Gas Market Shock and Interaction</h4>
+          <p class="how">Master of International Policy, University of Georgia, 2026</p>
+        </article>
+
+        <h3 class="label">Policy reports</h3>
+        <ul class="refs">
+          <li>&ldquo;V for Voting: An Analysis of Democratic Backsliding in South America.&rdquo; U.S. Department of State, Foreign Service Institute, 2024.</li>
+          <li>&ldquo;DPRK: Forced Labor and Supply Chain Analysis.&rdquo; U.S. Department of State, Bureau of East Asian and Pacific Affairs, 2024.</li>
+        </ul>
+
+        <h3 class="label">Research position</h3>
+        <article class="entry">
+          <h4>Energy Analyst, Benson-Bertsch Center for International Trade and Security</h4>
+          <p class="how">University of Georgia, Aug. 2025 to present</p>
+          <p>I build price forecasting models, R tools for collecting EIA data, a pipeline that maps electricity sources for U.S. military installations, and a scraper for state energy legislation. I also write two-page briefs on energy resources for general audiences.</p>
+        </article>
+      </section>
+
+      <section id="software" aria-labelledby="h-software">
+        <h2 id="h-software">Software and data</h2>
+        <dl class="args">
+          <div>
+            <dt>Energy and Economic Data Explorer</dt>
+            <dd>A Dash/Plotly application on Hugging Face Spaces that combines EIA and FRED data for the Benson-Bertsch Center's energy research program.</dd>
+          </div>
+          <div>
+            <dt>GridTranslate</dt>
+            <dd>A crosswalk table of more than 10,000 entries linking every U.S. balancing authority to its NERC Regional Entity and to the counties it serves.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="methods" aria-labelledby="h-methods">
+        <h2 id="h-methods">Methods and data</h2>
+        <dl class="args">
+          <div><dt>Volatility</dt><dd>EGARCH, EGARCH-X, HAR-RV</dd></div>
+          <div><dt>Regression</dt><dd>Panel regression with fixed effects</dd></div>
+          <div><dt>Text</dt><dd>Natural language processing</dd></div>
+          <div><dt>Data</dt><dd>EIA (API v2, SEDS), BEA, Census, FRED, NOAA/NCEI</dd></div>
+          <div><dt>Software</dt><dd>R, Python, Quarto, LaTeX</dd></div>
+        </dl>
+      </section>
+
+      <section id="teaching" aria-labelledby="h-teaching">
+        <h2 id="h-teaching">Teaching</h2>
+        <article class="entry">
+          <h3 class="title">POLS 1101: American Government</h3>
+          <p class="how">Teaching assistant, Fall 2026, University of Georgia</p>
+          <p>Instructor: Dr. Michael Lynch. I lead breakout sessions.</p>
+        </article>
+      </section>
+
+      <section id="education" aria-labelledby="h-education">
+        <h2 id="h-education">Education</h2>
+        <dl class="args years">
+          <div><dt>2026 to 2031</dt><dd>Ph.D., Political Science and International Affairs, University of Georgia (expected). Methodology track, energy emphasis.</dd></div>
+          <div><dt>2026</dt><dd>Master of International Policy, Honors, University of Georgia</dd></div>
+          <div><dt>2025</dt><dd>B.S., Political Science and International Affairs, <em>cum laude</em>, University of Georgia</dd></div>
+          <div><dt>2027</dt><dd>Certificate in Data Analysis and Policy, University of Georgia (expected)</dd></div>
+        </dl>
+        <p class="more"><a href="files/cv.pdf">Full CV (PDF)</a></p>
+      </section>
+
+      <section id="experience" aria-labelledby="h-experience">
+        <h2 id="h-experience">Industry experience</h2>
+        <dl class="args years">
+          <div><dt>2020 to present</dt><dd>Scanoleum, Milpitas, CA. LNG and oil market risk, export controls, and commercial contracts.</dd></div>
+          <div><dt>2023</dt><dd>Phronteseas. Project engineer on the refurbishment of 11 land drilling rigs for Kuwait Drilling Company.</dd></div>
+        </dl>
+      </section>
+
+      <section id="contact" aria-labelledby="h-contact">
+        <h2 id="h-contact">Contact</h2>
+        <dl class="args">
+          <div><dt>Email</dt><dd><a href="mailto:sandhuanitesh@gmail.com">sandhuanitesh@gmail.com</a></dd></div>
+          <div><dt>GitHub</dt><dd><a href="https://github.com/ani-sdhu">github.com/ani-sdhu</a></dd></div>
+          <div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/anisandhu/">linkedin.com/in/anisandhu</a></dd></div>
+          <div><dt>Address</dt><dd>University of Georgia, Athens, GA</dd></div>
+        </dl>
+      </section>
+
+      <footer class="foot">
+        <p>&copy; 2026 Anitesh Sandhu</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="console" id="console" role="region" aria-label="R console" hidden>
+    <div class="console-inner">
+      <div class="console-head">
+        <span>Console</span>
+        <button type="button" class="console-close" id="console-close">Close</button>
+      </div>
+      <div class="console-scroll" id="console-scroll">
+        <div class="console-out" id="console-out" role="log" aria-live="polite"></div>
+        <form class="console-line" id="console-form" autocomplete="off">
+          <label for="console-input"><span aria-hidden="true">&gt;</span><span class="sr-only">R command</span></label>
+          <input id="console-input" type="text" spellcheck="false" autocapitalize="off" autocorrect="off">
+        </form>
+      </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- Optional R console drawer -->
-  <section class="console" id="console" aria-label="R console" hidden>
-    <div class="console-head">
-      <span class="console-tab">Console</span>
-      <span class="console-path">~/phd/</span>
-      <span class="console-hint">try <code>research()</code> or <code>help()</code></span>
-      <button type="button" class="console-close" id="console-close" aria-label="Close console">&times;</button>
-    </div>
-    <div class="console-scroll" id="console-scroll">
-      <div class="console-out" id="console-out" aria-live="polite"></div>
-      <form class="console-line" id="console-form" autocomplete="off">
-        <label for="console-input" class="prompt">&gt;</label>
-        <input id="console-input" type="text" spellcheck="false" autocapitalize="off" autocorrect="off"
-               aria-label="Type an R command, for example research()">
-      </form>
-    </div>
-  </section>
-
-  <noscript>
-    <p style="max-width:40rem;margin:3rem auto;font-family:Georgia,serif">This site needs JavaScript to display. My CV is at <a href="files/cv.pdf">files/cv.pdf</a>.</p>
-  </noscript>
-
-  <script src="assets/js/content.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/site.js"></script>
 </body>
 </html>
