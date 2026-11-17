@@ -31,6 +31,12 @@
   function plogis(x) { return 1 / (1 + Math.exp(-x)); }
   function on(t, a, b) { return plogis(40 * (t - a)) - plogis(40 * (t - (b === undefined ? Infinity : b))); }
   function peak(t, at, h, w) { return h * Math.exp(-Math.pow((t - at) / (w || 0.04), 2)); }
+  // a slow build: rises as a square from a to b, then falls off quickly
+  function ramp(t, a, b, h) {
+    if (t <= a) return 0;
+    if (t <= b) return h * Math.pow((t - a) / (b - a), 2);
+    return h * Math.exp(-Math.pow((t - b) / 0.05, 2));
+  }
   function frac(t) { return t - Math.floor(t); }
   function summer(t) { var f = frac(t); return plogis(60 * (f - 0.38)) - plogis(60 * (f - 0.62)); }
   // a week off: distance around the calendar to a fixed time of year
@@ -51,9 +57,10 @@
     var target = trend(t) + s * (t < 2024.6 ? 14 : 12), used = 0;   // summers run heavier
     ["software", "coursework", "industry", "methods", "teaching"].forEach(function (b) { used += l[b]; });
     l.research = Math.max(2, target - used);                         // research takes up the rest
-    l.coursework += peak(t, 2025.37, 21);                            // crunch weeks
+    l.coursework += ramp(t, 2025.4, 2026.3, 9);                      // building toward the capstone
     l.methods += peak(t, 2028.3, 44);
-    l.research += peak(t, 2023.2, 14) + peak(t, 2026.3, 23) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
+    l.research += ramp(t, 2025.4, 2026.3, 14) +                       // crunch weeks
+      peak(t, 2023.2, 14) + peak(t, 2029.3, 42) + peak(t, 2031.3, 38);
     return l;
   }
   function holiday(t) {   // how far into a holiday week t falls, 0 to 1
@@ -216,7 +223,7 @@
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
       'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
-      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60. Crunch weeks reach about 65 before the Ph.D. and about 90 during it. ' +
+      'through the B.S., then rise steadily from the M.I.P. to the defense, to about 52. Summers run 50 to 60. Work builds slowly toward the M.I.P. capstone, near 65, and Ph.D. crunch weeks reach about 90. ' +
       'Everything after ' + monthOf(now) + ' is projected, with 50 and 80 percent intervals. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();
