@@ -51,7 +51,7 @@
         <div class="tip" id="plot-tip" hidden></div>
       </div>
       <p class="sr-only" id="plot-live" aria-live="polite"></p>
-      <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Terms hold near 40 hours through the B.S., then rise steadily from the M.I.P. to the defense. Summers run 50 to 60. Crunch weeks top out near 75 before the Ph.D. and near 90 during it. Holiday weeks are adjusted out, the way economists adjust for seasons, and marked as ticks under the axis. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The shaded side is a forecast, with its uncertainty shown as bands. Click a band to go to that section.</figcaption>
+      <figcaption>My time since my first semester, drawn the way a grid operator draws demand: hours per week, stacked by what serves them. Terms hold near 40 hours through the B.S., then rise steadily from the M.I.P. to the defense. Summers run 50 to 60. Crunch weeks top out near 65 before the Ph.D. and near 90 during it. Holiday weeks are adjusted out, the way economists adjust for seasons, and marked as ticks under the axis. I did the B.S. and the M.I.P. together in UGA's Double Dawgs program, so the M.I.P. starts in my senior year. The shaded side is a forecast, with its uncertainty shown as bands. Click a band to go to that section.</figcaption>
       <details class="code">
         <summary>see the code!</summary>
         <pre class="src"><code>wk   &lt;- seq(2021.66, 2031.42, by = 1/365)                    <span class="cm"># every day since my first semester</span>
@@ -74,9 +74,9 @@ load &lt;- cbind(                                                  <span class="
                                 10 * on(2026.6, 2028.4) + 6 * on(2028.4)),
   teaching   = (1 - s) * 10 * phd)
 load &lt;- cbind(load, research = pmax(2, target - rowSums(load)))  <span class="cm"># research takes up the rest</span>
-load[, "coursework"] &lt;- load[, "coursework"] + peak(2025.37, 31)
+load[, "coursework"] &lt;- load[, "coursework"] + peak(2025.37, 21)
 load[, "methods"]    &lt;- load[, "methods"] + peak(2028.3, 44)
-load[, "research"]   &lt;- load[, "research"] + peak(2023.2, 14) + peak(2026.3, 33) + peak(2029.3, 42) + peak(2031.3, 38)
+load[, "research"]   &lt;- load[, "research"] + peak(2023.2, 14) + peak(2026.3, 23) + peak(2029.3, 42) + peak(2031.3, 38)
 
 total &lt;- rowSums(load)
 h     &lt;- pmax(0, wk - now)
