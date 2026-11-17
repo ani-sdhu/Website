@@ -56,8 +56,8 @@
         14 * on(t, PHD, 2028.4)),
       industry: 2 + 8 * on(t, 2023.1, 2023.95) + s * (46 * on(t, 2021.6, 2024.6) + 20 * on(t, 2024.6, PHD)),
       methods: (1 - 0.5 * s) * (3 * on(t, 2021.6, 2024.6) + 8 * on(t, 2024.6, 2025.4) + 12 * on(t, 2025.4, PHD) +
-        16 * on(t, PHD, 2028.4) + 8 * on(t, 2028.4)),
-      teaching: (1 - s) * (18 * on(t, PHD, 2028.4) + 14 * on(t, 2028.4))
+        16 * on(t, PHD, 2027.6) + 28 * on(t, 2027.6, 2028.4) + 8 * on(t, 2028.4)),      // comps year: study
+      teaching: (1 - s) * (18 * on(t, PHD, 2027.6) + 3 * on(t, 2027.6, 2028.4) + 14 * on(t, 2028.4))   // minimal teaching before comps
     };
     var extra = t < 2024.6 ? 14 : 12 * (1 - phd) + 4 * phd;          // summers run heavier
     var target = trend(t) + s * extra, used = 0;
@@ -223,7 +223,7 @@
     o += '<path class="cross" id="cross" d="" visibility="hidden"/><g id="dots"></g>';
     holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" tabindex="0" role="img" aria-label="' +
       'Stacked area chart of my hours per week from fall 2021 to 2031, by what fills them, adjusted for holidays. School terms hold near 40 hours ' +
-      'through the B.S. and rise through the M.I.P. to a 65-hour capstone. The Ph.D. starts near 60, led by teaching, coursework, and methods, and research takes over after comprehensive exams. Crunch weeks reach about 90. ' +
+      'through the B.S. and rise through the M.I.P. to a 65-hour capstone. The Ph.D. starts near 60, led by teaching, coursework, and methods; teaching drops to a minimum in the year before comprehensive exams, and research takes over after them. Crunch weeks reach about 90. ' +
       'Everything after ' + monthOf(now) + ' is projected. Use the left and right arrow keys to read values.">' + o + "</svg>";
     view = { X: X, Y: Y, m: m, pw: pw, ph: ph, W: W, H: H, svg: holder.querySelector("svg") };
     wireSvg();

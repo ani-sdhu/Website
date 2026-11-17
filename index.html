@@ -108,8 +108,8 @@
                             14 * on(2026.6, 2028.4)),
     industry   = 2 + 8 * on(2023.1, 2023.95) + s * (46 * on(2021.6, 2024.6) + 20 * on(2024.6, 2026.6)),
     methods    = (1 - 0.5 * s) * (3 * on(2021.6, 2024.6) + 8 * on(2024.6, 2025.4) + 12 * on(2025.4, 2026.6) +
-                                  16 * on(2026.6, 2028.4) + 8 * on(2028.4)),
-    teaching   = (1 - s) * (18 * on(2026.6, 2028.4) + 14 * on(2028.4)))
+                                  16 * on(2026.6, 2027.6) + 28 * on(2027.6, 2028.4) + 8 * on(2028.4)),   <span class="cm"># comps year: study</span>
+    teaching   = (1 - s) * (18 * on(2026.6, 2027.6) + 3 * on(2027.6, 2028.4) + 14 * on(2028.4)))       <span class="cm"># minimal before comps</span>
   load &lt;- cbind(load, research = pmax(2, target - rowSums(load)))  <span class="cm"># research takes up the rest</span>
   load[, "coursework"] &lt;- load[, "coursework"] + ramp(2025.4, 2026.3, 9)
   load[, "methods"]    &lt;- load[, "methods"] + peak(2028.3, 28)
