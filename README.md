@@ -2,8 +2,9 @@
 
 A one-page academic site laid out like an R help page: a documentation strip at
 the top, monospace headings, a two-column "arguments" table for structured
-facts, and the Environment list as the contents menu. The masthead figure is a
-transmission line whose conductors are plotted as catenaries.
+facts, and the Environment list as the contents menu. The masthead figure is an
+R Markdown style chunk: a base R plot of the author's age in MMBtu, with degrees
+marked as points.
 
 It is plain HTML and CSS with a small script. There is no build step, and the
 page reads fine with JavaScript turned off.
@@ -17,7 +18,6 @@ page reads fine with JavaScript turned off.
 | `assets/js/site.js` | Theme switch, contents menu, and the optional R console. |
 | `assets/img/headshot.jpg` | Portrait. |
 | `files/cv.pdf` | CV. Replace this file when the CV changes. |
-| `tools/lines.js` | Generates the transmission line figure. |
 
 ## Editing
 
@@ -26,12 +26,9 @@ Open `index.html` and change the text. Each section is a `<section>` with an
 `<nav class="env">`. The small numbers in that list are counts of entries; keep
 them in step with the page.
 
-To redraw the figure (tower positions, sag, number of towers), edit
-`tools/lines.js` and run:
-
-```bash
-node tools/lines.js
-```
+The figure reads one setting: `data-born` on `<figure id="chunk">` in
+`index.html`. The milestone points are listed at the top of the figure code in
+`assets/js/site.js`.
 
 ## Previewing locally
 
