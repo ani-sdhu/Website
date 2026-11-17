@@ -18,67 +18,121 @@
   setTheme(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
   $$("[data-theme-toggle]").forEach(function (b) { b.addEventListener("click", flipTheme); });
 
-  /* ---------- the figure: age in MMBtu, drawn like a base R plot ---------- */
+  /* ---------- the figure: my energy as a power line ----------
+     A(t) is the line, with t in decimal years. It must match the R code
+     printed above the plot. The poles stand at the turning points, and a
+     pulse travels along the line from birth to today. */
   var chunk = $("#chunk"), holder = $("#plot");
-  var DAY = 864e5, MMBTU_PER_DAY = 2000 * 4184 / 1.055056e9;   // 2,000 kcal a day
-  var born = new Date(chunk.getAttribute("data-born") + "T00:00:00Z");
-  var today = new Date();
-  var marks = [
-    { at: "2025-05-15", label: "B.S.", side: "up" },
-    { at: "2026-05-15", label: "M.I.P.", side: "up" },
-    { at: "2026-08-15", label: "Ph.D. begins", side: "down" },
-    { at: "2031-05-15", label: "Ph.D. (expected)", side: "up", open: true }
+  var BORN = 2002.58, END = 2032;
+  function plogis(x) { return 1 / (1 + Math.exp(-x)); }
+  function bump(t, at, w, h) { return h * Math.exp(-Math.pow((t - at) / w, 2)); }
+  function rest(t) { return 1 - 0.3 * Math.pow(Math.max(0, Math.cos(2 * Math.PI * (t - 0.54))), 3); }
+  function A(t) {
+    return rest(t) * (0.3 + 0.7 * plogis(5 * (t - 2008.75)) +
+      0.25 * plogis(6 * (t - 2020)) + 0.5 * plogis(8 * (t - 2026.6)) +
+      bump(t, 2025.9, 0.4, 0.7) + bump(t, 2026.75, 0.25, 0.9) +
+      bump(t, 2028.3, 0.1, 1.3) + bump(t, 2031.3, 0.2, 1.2));
+  }
+  function yearNow() {
+    var d = new Date(), y = d.getUTCFullYear(), s = Date.UTC(y, 0, 1);
+    return y + (d - s) / (Date.UTC(y + 1, 0, 1) - s);
+  }
+  // poles: where the line turns. "wide" labels are dropped on narrow screens.
+  var poles = [
+    { at: 2009.3, text: "moved to the U.S., age 6", brief: "U.S., age 6", anchor: "start" },
+    { at: 2020.3, text: "first job, age 17", anchor: "end", wide: true },
+    { at: 2025.9, text: "master's", anchor: "end", wide: true },
+    { at: 2026.75, text: "Ph.D. begins", brief: "Ph.D.", anchor: "end" },
+    { at: 2028.3, text: "comps", anchor: "middle", wide: true },
+    { at: 2031.3, text: "defense", anchor: "end", wide: true }
   ];
-  function mmbtu(d) { return (d - born) / DAY * MMBTU_PER_DAY; }
-  function utc(str) { return new Date(str + "T00:00:00Z"); }
+  var view = null, moving = !calm, visible = true, head = BORN - 1.5;
 
   function draw() {
-    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 250 : 300;
-    var m = { l: 54, r: 18, t: 12, b: 30 };
-    var t0 = utc("2024-01-01"), t1 = utc("2032-01-01");
-    var y0 = Math.floor(mmbtu(t0) / 5) * 5, y1 = Math.ceil(mmbtu(t1) / 5) * 5;
-    var X = function (d) { return m.l + (d - t0) / (t1 - t0) * (W - m.l - m.r); };
-    var Y = function (v) { return H - m.b - (v - y0) / (y1 - y0) * (H - m.t - m.b); };
-    var r = function (n) { return Math.round(n * 10) / 10; };
-    var now = Math.min(Math.max(today, t0), t1);
-    var o = "";
+    var W = Math.max(280, holder.clientWidth), small = W < 560, H = small ? 270 : 330;
+    var m = { l: 56, r: 14, t: 14, b: 30 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+    var top = 3.75, now = Math.min(yearNow(), END);
+    var X = function (t) { return m.l + (t - BORN) / (END - BORN) * pw; };
+    var T = function (x) { return BORN + (x - m.l) / pw * (END - BORN); };
+    var Y = function (v) { return m.t + ph - v / top * ph; };
+    var f1 = function (n) { return Math.round(n * 10) / 10; };
+    var o = "", x, y;
 
-    o += '<rect class="frame" x="' + m.l + '" y="' + m.t + '" width="' + (W - m.l - m.r) + '" height="' + (H - m.t - m.b) + '"/>';
-    for (var yr = 2024; yr <= 2032; yr += small ? 2 : 1) {
-      var x = r(X(utc(yr + "-01-01")));
-      o += '<path class="tick" d="M' + x + " " + (H - m.b) + 'v6"/><text x="' + x + '" y="' + (H - m.b + 21) + '" text-anchor="middle">' + yr + "</text>";
+    o += '<rect class="frame" x="' + m.l + '" y="' + m.t + '" width="' + pw + '" height="' + ph + '"/>';
+    for (var yr = 2005; yr < END; yr += small ? 10 : 5) {
+      x = f1(X(yr));
+      o += '<path class="tick" d="M' + x + " " + (m.t + ph) + 'v6"/><text x="' + x + '" y="' + (m.t + ph + 21) + '" text-anchor="middle">' + yr + "</text>";
     }
-    for (var v = y0; v <= y1; v += 5) {
-      var y = r(Y(v));
+    [0, 1, 2, 3].forEach(function (v) {
+      y = f1(Y(v));
       o += '<path class="tick" d="M' + m.l + " " + y + 'h-6"/><text transform="translate(' + (m.l - 11) + " " + y + ') rotate(-90)" text-anchor="middle">' + v + "</text>";
-    }
-    o += '<text transform="translate(13 ' + r((m.t + H - m.b) / 2) + ') rotate(-90)" text-anchor="middle">Energy metabolized (MMBtu)</text>';
+    });
+    o += '<text transform="translate(13 ' + f1(m.t + ph / 2) + ') rotate(-90)" text-anchor="middle">Energy</text>';
 
-    o += '<path class="curve" d="M' + r(X(t0)) + " " + r(Y(mmbtu(t0))) + "L" + r(X(now)) + " " + r(Y(mmbtu(now))) + '"/>';
-    o += '<path class="plan" d="M' + r(X(now)) + " " + r(Y(mmbtu(now))) + "L" + r(X(t1)) + " " + r(Y(mmbtu(t1))) + '"/>';
-
-    marks.forEach(function (k) {
-      var d = utc(k.at), px = r(X(d)), py = r(Y(mmbtu(d))), up = k.side === "up";
-      o += '<circle class="pt' + (k.open ? " open" : "") + '" cx="' + px + '" cy="' + py + '" r="3.5"/>';
-      o += '<text x="' + (px + (up ? -8 : 8)) + '" y="' + (py + (up ? -8 : 17)) + '" text-anchor="' + (up ? "end" : "start") + '">' + k.label + "</text>";
+    // distribution poles: a post, a crossarm, two insulators
+    poles.forEach(function (p) {
+      var px = f1(X(p.at)), py = f1(Y(A(p.at))), cls = p.at > now ? "pole ahead" : "pole";
+      o += '<path class="' + cls + '" d="M' + px + " " + (m.t + ph) + "V" + py + "M" + (px - 7) + " " + (py + 6) + "h14M" + (px - 7) + " " + (py + 6) + "v-4M" + (px + 7) + " " + (py + 6) + 'v-4"/>';
+      if (small && p.wide) return;
+      var dx = p.anchor === "end" ? -6 : p.anchor === "start" ? 6 : 0;
+      o += '<text class="note" x="' + f1(px + dx) + '" y="' + f1(py - 9) + '" text-anchor="' + p.anchor + '">' + (small && p.brief ? p.brief : p.text) + "</text>";
     });
 
-    var nx = r(X(now)), ny = r(Y(mmbtu(now)));
-    o += '<path class="now-line" d="M' + nx + " " + ny + "V" + (m.t + 1) + '"/>';
-    o += '<circle class="pt now" cx="' + nx + '" cy="' + ny + '" r="4.5"/>';
-    o += '<text class="now-text" x="' + (nx + 7) + '" y="' + (m.t + 17) + '">today</text>';
+    // the line: solid up to today, dotted after
+    var past = "", ahead = "";
+    for (x = m.l; x <= m.l + pw; x += 0.75) {
+      var t = T(x), pt = f1(x) + " " + f1(Y(A(t)));
+      if (t <= now) past += (past ? "L" : "M") + pt; else ahead += (ahead ? "L" : "M") + pt;
+    }
+    var nx = f1(X(now)), ny = f1(Y(A(now)));
+    o += '<path class="line ahead" d="M' + nx + " " + ny + ahead.replace(/^M/, "L") + '"/><path class="line" d="' + past + '"/>';
+    o += '<path class="charge" id="charge"/><circle class="here" id="here" cx="' + nx + '" cy="' + ny + '" r="4.5"/>';
+    o += '<text class="now-text" x="' + (nx + 6) + '" y="' + (m.t + ph - 8) + '">today</text>';
 
-    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Line chart of energy metabolized since birth at 2,000 kilocalories a day, in MMBtu, from 2024 to 2032. Points mark the B.S. in 2025, the Master of International Policy in 2026, the start of the Ph.D. in 2026, and the expected Ph.D. in 2031. Today the value is ' + mmbtu(today).toFixed(1) + ' MMBtu.">' + o + "</svg>";
+    holder.innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="A line showing my energy from 2002 to 2032. It is low until 2008, rises sharply when I moved to the United States at six, steps up at a first job at 17, and peaks during the master\'s degree and the start of the Ph.D., with a dip every summer. After today the line is dotted, with planned peaks at comprehensive exams and the defense. A pulse travels along the line from birth to today.">' + o + "</svg>";
+    view = { X: X, Y: Y, now: now, pxPerYear: pw / (END - BORN), charge: holder.querySelector("#charge"), here: holder.querySelector("#here") };
+    $("#live-out").textContent = A(now).toFixed(2);
+    if (!moving) pulse();
   }
 
-  if (!isNaN(born)) {
-    chunk.hidden = false;
-    $("#born-out").textContent = chunk.getAttribute("data-born");
-    $("#age-out").textContent = mmbtu(today).toFixed(1);
-    draw();
-    var redraw = null;
-    window.addEventListener("resize", function () { clearTimeout(redraw); redraw = setTimeout(draw, 120); });
+  // a short burst of oscillation centred on `head`, riding on the line
+  function pulse() {
+    var v = view, half = 1.5, d = "", from = Math.max(BORN, head - half), to = Math.min(v.now, head + half);
+    for (var t = from; t <= to; t += 0.75 / v.pxPerYear) {
+      var wob = 0.34 * Math.exp(-Math.pow((t - head) / 0.6, 2)) * Math.sin(2 * Math.PI * 3.2 * (t - head));
+      d += (d ? "L" : "M") + Math.round(v.X(t) * 10) / 10 + " " + Math.round(v.Y(A(t) + wob) * 10) / 10;
+    }
+    v.charge.setAttribute("d", d);
+    var near = Math.max(0, 1 - Math.abs(head - v.now) / 0.7);
+    v.here.setAttribute("r", (4.5 + 3.5 * near).toFixed(1));
   }
+
+  chunk.hidden = false;
+  draw();
+  var last = 0;
+  function frame(ts) {
+    if (moving && visible && !document.hidden && ts - last > 33) {
+      var dt = Math.min(100, ts - last) / 1000;
+      last = ts;
+      head += dt * (view.now - BORN + 3) / 5.5;            // one crossing takes about 5.5 seconds
+      if (head > view.now + 3) head = BORN - 1.5;          // rest a moment, then start again
+      pulse();
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(holder);
+  }
+  var pauseBtn = $("#plot-pause");
+  function showPause() {
+    pauseBtn.textContent = moving ? "Pause" : "Play";
+    pauseBtn.setAttribute("aria-pressed", moving ? "false" : "true");
+  }
+  showPause();
+  pauseBtn.addEventListener("click", function () { moving = !moving; showPause(); });
+  var redraw = null;
+  window.addEventListener("resize", function () { clearTimeout(redraw); redraw = setTimeout(draw, 120); });
 
   /* ---------- contents rail ---------- */
   var env = $(".env"), toggle = $("#env-toggle"), now = $("#env-now");

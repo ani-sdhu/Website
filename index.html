@@ -37,16 +37,21 @@
       <img class="portrait" src="assets/img/headshot.jpg" alt="Portrait of Anitesh Sandhu" width="104" height="104">
     </div>
 
-    <!-- Set data-born to your birth date (YYYY-MM-DD). The figure and the number below it update on their own. -->
-    <figure class="chunk" id="chunk" data-born="2002-07-31" hidden>
-      <pre class="src" aria-hidden="true"><code>born  &lt;- as.Date("<span id="born-out"></span>")
-day   &lt;- seq(as.Date("2024-01-01"), as.Date("2032-01-01"), by = "day")
-mmbtu &lt;- as.numeric(day - born) * 2000 * 4184 / 1.055056e9   <span class="cm"># 2,000 kcal a day, in MMBtu</span>
-plot(day, mmbtu, type = "l", xlab = "", ylab = "Energy metabolized (MMBtu)")</code></pre>
+    <figure class="chunk" id="chunk" hidden>
+      <pre class="src" aria-hidden="true"><code>bump &lt;- function(t, at, w, h) h * exp(-((t - at) / w)^2)
+rest &lt;- function(t) 1 - 0.3 * pmax(0, cos(2 * pi * (t - 0.54)))^3           <span class="cm"># summers</span>
+A &lt;- function(t) rest(t) * (0.3 + 0.7 * plogis(5 * (t - 2008.75)) +         <span class="cm"># moved to the U.S. at six</span>
+       0.25 * plogis(6 * (t - 2020)) + 0.5 * plogis(8 * (t - 2026.6)) +     <span class="cm"># first job, Ph.D.</span>
+       bump(t, 2025.9, 0.4, 0.7) + bump(t, 2026.75, 0.25, 0.9) +            <span class="cm"># master's, first term</span>
+       bump(t, 2028.3, 0.1, 1.3) + bump(t, 2031.3, 0.2, 1.2))               <span class="cm"># comps, defense</span>
+curve(A, 2002.58, 2032, n = 4000, ylab = "Energy")</code></pre>
       <div class="plot" id="plot"></div>
-      <pre class="src out"><code><span aria-hidden="true">round(mmbtu[day == Sys.Date()], 1)
-## [1] </span><span id="age-out"></span><span class="sr-only"> MMBtu metabolized so far</span></code></pre>
-      <figcaption>My age in MMBtu, the unit natural gas is priced in, at 2,000 kilocalories a day. Points mark degrees; the dashed line is the plan.</figcaption>
+      <pre class="src out" aria-hidden="true"><code>round(A(now), 2)
+## [1] <span id="live-out"></span></code></pre>
+      <p class="chunk-tools">
+        <button type="button" class="text-btn" id="plot-pause" aria-pressed="false">Pause</button>
+      </p>
+      <figcaption>A model of my energy, not a measurement: logistic steps and Gaussian bumps, with a dip every summer. It stays low until I moved to the United States at six. The poles mark the turns, the dotted line is the forecast, and the pulse runs from the day I was born to today.</figcaption>
     </figure>
   </header>
 
