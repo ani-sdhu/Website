@@ -455,3 +455,9 @@ main p, figcaption { text-wrap: pretty; }
   .hero figcaption, .hero .code { padding-left: 0; }
 }
 .navbar li a[data-band].on { border-bottom-color: var(--band); }
+
+/* chart title and explainer, EIA style: title, then one line on how to read it */
+.fig-head { margin: 0 0 12px; }
+.fig-title { margin: 0; font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif; font-weight: 600; font-size: 1.125rem; line-height: 1.25; color: var(--text); }
+.fig-sub { margin: 4px 0 0; font-family: "Source Sans 3", "Helvetica Neue", Arial, sans-serif; font-size: .875rem; line-height: 1.45; color: var(--text-2); max-width: 62ch; }
+.hero .key { margin-bottom: 2px; }

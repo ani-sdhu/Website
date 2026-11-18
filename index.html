@@ -70,6 +70,10 @@
         <p>I am a first-year Ph.D. student in Political Science and International Affairs at the University of Georgia, on the methodology track with an energy emphasis. I work as an Energy Analyst at UGA's Benson-Bertsch Center for International Trade and Security. I have also worked in the energy industry, on LNG and oil market risk and on a land drilling rig refurbishment project.</p>
       </div>
       <div class="hero-side">
+        <div class="fig-head">
+          <p class="fig-title">My demand curve</p>
+          <p class="fig-sub">Power grid operators chart electricity demand as stacked bands, one for each source of supply. This is the same chart for my time: hours of work per week since my first semester, stacked by what filled them.</p>
+        </div>
         <ul class="key" aria-label="Chart key">
           <li data-band="research"><span class="sw" aria-hidden="true"></span>research</li>
           <li data-band="teaching"><span class="sw" aria-hidden="true"></span>teaching</li>
@@ -84,7 +88,7 @@
           <div class="tip" id="plot-tip" hidden></div>
         </div>
         <p class="sr-only" id="plot-live" aria-live="polite"></p>
-        <figcaption>Hours per week since my first semester, stacked the way a grid operator stacks demand. The gray side is a forecast; click a band, or a matching color in the menu, to jump to that section.</figcaption>
+        <figcaption>The gray side is projected. Holiday weeks are adjusted out and marked under the axis. Click a band, or a matching color in the menu, to jump to that section.</figcaption>
         <details class="code">
           <summary>see the code!</summary>
           <pre class="src"><code>wk   &lt;- seq(2021.66, 2031.42, by = 1/365)                    <span class="cm"># every day since my first semester</span>
